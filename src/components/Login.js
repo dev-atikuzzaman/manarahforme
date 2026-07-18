@@ -17,7 +17,7 @@ export default function Login({ onLoggedIn }) {
     setErr(""); setBusy(true);
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
-    if (error) return setErr(error.message);
+    if (error) return setErr(error.message || "লগইন ব্যর্থ হয়েছে। ইমেইল/পাসওয়ার্ড চেক করুন।");
     onLoggedIn(data.session);
   }
 
@@ -25,7 +25,12 @@ export default function Login({ onLoggedIn }) {
     e.preventDefault();
     setErr(""); setInfo(""); setBusy(true);
     const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) { setBusy(false); return setErr(error.message); }
+    if (error) { setBusy(false); return setErr(error.message || "সাইন আপ ব্যর্থ হয়েছে, আবার চেষ্টা করুন।"); }
+    if (!data?.user) { setBusy(false); return setErr("অ্যাকাউন্ট তৈরি করা যায়নি। ইমেইলটা আগে ব্যবহৃত হয়ে থাকতে পারে।"); }
+    if (data.user.identities && data.user.identities.length === 0) {
+      setBusy(false);
+      return setErr("এই ইমেইল দিয়ে ইতিমধ্যে একটা অ্যাকাউন্ট আছে। নিচে লগইন করুন, অথবা ভিন্ন ইমেইল ব্যবহার করুন।");
+    }
 
     const code = Math.random().toString(36).slice(2, 8).toUpperCase();
     const { data: inst, error: instErr } = await supabase
@@ -33,7 +38,7 @@ export default function Login({ onLoggedIn }) {
       .insert({ name: institutionName, invite_code: code })
       .select()
       .single();
-    if (instErr) { setBusy(false); return setErr(instErr.message); }
+    if (instErr) { setBusy(false); return setErr(instErr.message || "প্রতিষ্ঠান তৈরি করা যায়নি।"); }
 
     const { error: profErr } = await supabase.from("profiles").insert({
       id: data.user.id,
@@ -43,7 +48,7 @@ export default function Login({ onLoggedIn }) {
       status: "approved",
     });
     setBusy(false);
-    if (profErr) return setErr(profErr.message);
+    if (profErr) return setErr(profErr.message || "প্রোফাইল তৈরি করা যায়নি।");
     setInfo(`প্রতিষ্ঠান তৈরি হয়েছে। ইনভাইট কোড: ${code} — এটা সংরক্ষণ করুন, নতুন সদস্যরা এই কোড দিয়ে যোগ দেবে। ইমেইল ভেরিফাই করে লগইন করুন।`);
     setMode("login");
   }
@@ -59,7 +64,12 @@ export default function Login({ onLoggedIn }) {
     if (instErr || !inst) { setBusy(false); return setErr("এই কোডে কোনো প্রতিষ্ঠান পাওয়া যায়নি।"); }
 
     const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) { setBusy(false); return setErr(error.message); }
+    if (error) { setBusy(false); return setErr(error.message || "সাইন আপ ব্যর্থ হয়েছে, আবার চেষ্টা করুন।"); }
+    if (!data?.user) { setBusy(false); return setErr("অ্যাকাউন্ট তৈরি করা যায়নি। ইমেইলটা আগে ব্যবহৃত হয়ে থাকতে পারে।"); }
+    if (data.user.identities && data.user.identities.length === 0) {
+      setBusy(false);
+      return setErr("এই ইমেইল দিয়ে ইতিমধ্যে একটা অ্যাকাউন্ট আছে। নিচে লগইন করুন, অথবা ভিন্ন ইমেইল ব্যবহার করুন।");
+    }
 
     const { error: profErr } = await supabase.from("profiles").insert({
       id: data.user.id,
@@ -69,7 +79,7 @@ export default function Login({ onLoggedIn }) {
       status: "pending",
     });
     setBusy(false);
-    if (profErr) return setErr(profErr.message);
+    if (profErr) return setErr(profErr.message || "যোগদানের অনুরোধ পাঠানো যায়নি।");
     setInfo(`"${inst.name}"-এ যোগদানের অনুরোধ পাঠানো হয়েছে। এডমিন অনুমোদন করলে প্রবেশ করতে পারবেন।`);
     setMode("login");
   }
