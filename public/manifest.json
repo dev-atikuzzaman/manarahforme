@@ -1,0 +1,14 @@
+{
+  "short_name": "মানারাহ",
+  "name": "মানারাহ — মসজিদ ও মাদ্রাসা ম্যানেজমেন্ট",
+  "icons": [
+    { "src": "logo192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "logo512.png", "type": "image/png", "sizes": "512x512" },
+    { "src": "maskable-icon.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#04120c",
+  "background_color": "#04120c",
+  "orientation": "portrait-primary"
+}
