@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Hind Siliguri', system-ui, sans-serif;
+  background: #04120c;
+  color: #f4ead9;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(245,180,0,0.35); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(245,180,0,0.6); }
+
+.font-display { font-family: 'Noto Serif Bengali', Georgia, serif; }
+
+.glass-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  border: 1px solid rgba(245,180,0,0.12);
+  backdrop-filter: blur(6px);
+}
+
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Signature element: mihrab/mosque-arch frame, used for the hero visual and empty states.
+   This is the one distinctive shape the whole product is built around. */
+.arch-frame {
+  position: relative;
+  border-radius: 50% 50% 6px 6px / 22% 22% 0 0;
+  overflow: hidden;
+  border: 1px solid rgba(245,180,0,0.35);
+  box-shadow: 0 0 0 8px rgba(4,18,12,0.6), 0 20px 60px rgba(0,0,0,0.45);
+}
+.arch-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(245,180,0,0.08), transparent 30%);
+  pointer-events: none;
+}
+
+/* Star-and-cross geometric divider, echoing Islamic architectural motifs */
+.motif-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(245,180,0,0.5);
+}
+.motif-divider::before,
+.motif-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245,180,0,0.35), transparent);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.anim-in { animation: fadeInUp 0.25s ease-out both; }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-12px) translateX(-50%); }
+  to { opacity: 1; transform: translateY(0) translateX(-50%); }
+}
+.toast-in { animation: toastIn 0.25s ease-out both; }
+
+input, textarea, select {
+  outline: none;
+}
