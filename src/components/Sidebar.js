@@ -13,7 +13,7 @@ const NAV = [
   { key: "settings", label: "সেটিংস", icon: "⚙" },
 ];
 
-export default function Sidebar({ active, onChange, institutionName, role, onLogout, open, onClose }) {
+export default function Sidebar({ active, onChange, institutionName, role, onLogout, open, onClose, isPlatformAdmin, onOwnerPanel }) {
   return (
     <>
       {open && <div className="fixed inset-0 bg-black/50 z-30 md:hidden" onClick={onClose} />}
@@ -49,6 +49,11 @@ export default function Sidebar({ active, onChange, institutionName, role, onLog
 
         <div className="p-3 border-t border-gold-500/10">
           <div className="px-3 py-1.5 text-[11px] text-cream/35 uppercase tracking-wide">{role}</div>
+          {isPlatformAdmin && (
+            <button onClick={onOwnerPanel} className="w-full text-left px-3 py-2.5 rounded-xl text-sm text-gold-400 hover:bg-white/5 transition">
+              ✦ মালিক প্যানেল
+            </button>
+          )}
           <button onClick={onLogout} className="w-full text-left px-3 py-2.5 rounded-xl text-sm text-cream/60 hover:bg-white/5 hover:text-red-300 transition">
             লগআউট
           </button>
