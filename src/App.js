@@ -17,6 +17,7 @@ import Settings from "./components/modules/Settings";
 import NotificationBell from "./components/NotificationBell";
 import GuardianAuth from "./components/GuardianAuth";
 import GuardianPortal from "./components/GuardianPortal";
+import OwnerDashboard from "./components/OwnerDashboard";
 
 export default function App() {
   const [showAuth, setShowAuth] = useState(false);
@@ -25,6 +26,8 @@ export default function App() {
   const [profile, setProfile] = useState(null);
   const [profileChecked, setProfileChecked] = useState(false);
   const [institution, setInstitution] = useState(null);
+  const [isPlatformAdmin, setIsPlatformAdmin] = useState(false);
+  const [ownerMode, setOwnerMode] = useState(false);
   const [active, setActive] = useState("overview");
   const [toast, setToast] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -43,11 +46,16 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!session) { setProfile(null); setInstitution(null); setProfileChecked(false); return; }
+    if (!session) { setProfile(null); setInstitution(null); setProfileChecked(false); setIsPlatformAdmin(false); return; }
     setProfileChecked(false);
     (async () => {
-      const { data: prof } = await supabase.from("profiles").select("*").eq("id", session.user.id).maybeSingle();
+      const [{ data: prof }, { data: owner }] = await Promise.all([
+        supabase.from("profiles").select("*").eq("id", session.user.id).maybeSingle(),
+        supabase.from("platform_admins").select("id").eq("id", session.user.id).maybeSingle(),
+      ]);
       setProfile(prof || null);
+      setIsPlatformAdmin(!!owner);
+      setOwnerMode(!!owner);
       if (prof?.institution_id) {
         const { data: inst } = await supabase.from("institutions").select("*").eq("id", prof.institution_id).maybeSingle();
         setInstitution(inst || null);
@@ -100,6 +108,16 @@ export default function App() {
     return <div className="min-h-screen bg-ink-950 flex items-center justify-center text-cream/40">লোড হচ্ছে...</div>;
   }
 
+  if (isPlatformAdmin && ownerMode) {
+    return (
+      <OwnerDashboard
+        hasOwnInstitution={!!profile}
+        onSwitchToInstitution={() => setOwnerMode(false)}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
   if (!profile) {
     return <GuardianPortal onLogout={handleLogout} />;
   }
@@ -130,6 +148,29 @@ export default function App() {
     );
   }
 
+  const trialExpired =
+    institution?.trial_ends_at &&
+    (institution.plan_status === "trial" || !institution.plan_status) &&
+    new Date(institution.trial_ends_at) < new Date();
+
+  if (!isPlatformAdmin && institution && (institution.plan_status === "suspended" || trialExpired)) {
+    return (
+      <div className="min-h-screen bg-ink-950 flex items-center justify-center px-6 text-center">
+        <div className="glass-card rounded-3xl p-10 max-w-md">
+          <div className="font-display text-xl text-red-300 mb-3">
+            {institution.plan_status === "suspended" ? "প্রতিষ্ঠান সাময়িকভাবে স্থগিত" : "ট্রায়াল মেয়াদ শেষ"}
+          </div>
+          <p className="text-sm text-cream/50 leading-relaxed mb-6">
+            {institution.plan_status === "suspended"
+              ? "এই প্রতিষ্ঠানের অ্যাক্সেস সাময়িকভাবে বন্ধ করা হয়েছে। বিস্তারিত জানতে সেবা প্রদানকারীর সাথে যোগাযোগ করুন।"
+              : "আপনার ফ্রি ট্রায়ালের মেয়াদ শেষ হয়ে গেছে। চালিয়ে যেতে সাবস্ক্রিপশন সক্রিয় করতে হবে — সেবা প্রদানকারীর সাথে যোগাযোগ করুন।"}
+          </p>
+          <button onClick={handleLogout} className="text-xs text-cream/50 hover:text-gold-400">লগআউট</button>
+        </div>
+      </div>
+    );
+  }
+
   const canEdit = profile.role === "super_admin" || profile.role === "branch_admin";
 
   return (
@@ -142,6 +183,8 @@ export default function App() {
         onLogout={handleLogout}
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        isPlatformAdmin={isPlatformAdmin}
+        onOwnerPanel={() => setOwnerMode(true)}
       />
 
       <div className="flex-1 min-w-0">
