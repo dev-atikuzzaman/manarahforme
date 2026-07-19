@@ -4,6 +4,7 @@ import { supabase } from "../../lib/supabase";
 const TILES = [
   { key: "students", label: "শিক্ষার্থী/সদস্য", icon: "✎", desc: "ভর্তি, তথ্য, পোর্টাল কোড" },
   { key: "attendance", label: "উপস্থিতি ও হিফজ", icon: "✓", desc: "দৈনিক হাজিরা, অগ্রগতি" },
+  { key: "fees", label: "ফি সংগ্রহ", icon: "৳", desc: "মাসিক ফি ট্র্যাকিং, বকেয়া" },
   { key: "donations", label: "দান ও যাকাত", icon: "◆", desc: "দান রেকর্ড, নিসাব হিসাব" },
   { key: "qurbani", label: "কুরবানি হিসাব", icon: "✦", desc: "ভাগ বণ্টন, মাংস বিতরণ" },
   { key: "accounting", label: "একাউন্টিং", icon: "৳", desc: "আয়-ব্যয়, মাসিক ট্রেন্ড" },
