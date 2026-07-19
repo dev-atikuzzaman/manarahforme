@@ -13,7 +13,7 @@ function safeMessage(error, fallback) {
   return fallback;
 }
 
-export default function GuardianAuth({ onLoggedIn, onBack }) {
+export default function GuardianAuth({ onLoggedIn, onSetupChange, onBack }) {
   const [mode, setMode] = useState("login"); // login | signup
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,6 +39,7 @@ export default function GuardianAuth({ onLoggedIn, onBack }) {
   async function handleSignup(e) {
     e.preventDefault();
     setErr(""); setInfo(""); setBusy(true);
+    onSetupChange?.(true);
     try {
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) return setErr(safeMessage(error, "সাইন আপ ব্যর্থ হয়েছে, আবার চেষ্টা করুন।"));
@@ -60,6 +61,7 @@ export default function GuardianAuth({ onLoggedIn, onBack }) {
       setErr(safeMessage(ex, "সাইন আপ করা যায়নি, নেটওয়ার্ক সমস্যা হতে পারে।"));
     } finally {
       setBusy(false);
+      onSetupChange?.(false);
     }
   }
 

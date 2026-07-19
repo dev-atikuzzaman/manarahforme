@@ -15,7 +15,7 @@ function safeMessage(error, fallback) {
   return `${fallback} — এটা বারবার হলে ইন্টারনেট সংযোগ ও Vercel-এর REACT_APP_SUPABASE_URL / REACT_APP_SUPABASE_ANON_KEY ঠিক আছে কিনা যাচাই করুন।`;
 }
 
-export default function Login({ onLoggedIn }) {
+export default function Login({ onLoggedIn, onSetupChange }) {
   const [mode, setMode] = useState("login"); // login | create | join
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,6 +43,7 @@ export default function Login({ onLoggedIn }) {
   async function handleCreateInstitution(e) {
     e.preventDefault();
     setErr(""); setInfo(""); setBusy(true);
+    onSetupChange?.(true);
     try {
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) return setErr(safeMessage(error, "সাইন আপ ব্যর্থ হয়েছে, আবার চেষ্টা করুন।"));
@@ -73,18 +74,20 @@ export default function Login({ onLoggedIn }) {
       });
       if (profErr) return setErr(safeMessage(profErr, "প্রোফাইল তৈরি করা যায়নি।"));
 
-      setInfo(`প্রতিষ্ঠান তৈরি হয়েছে। ইনভাইট কোড: ${code} — এটা সংরক্ষণ করুন। এখন লগইন করুন।`);
-      setMode("login");
+      setInfo(`প্রতিষ্ঠান তৈরি হয়েছে। ইনভাইট কোড: ${code} — এটা সংরক্ষণ করুন।`);
+      onLoggedIn(data.session);
     } catch (ex) {
       setErr(safeMessage(ex, "প্রতিষ্ঠান তৈরি করা যায়নি, নেটওয়ার্ক সমস্যা হতে পারে।"));
     } finally {
       setBusy(false);
+      onSetupChange?.(false);
     }
   }
 
   async function handleJoin(e) {
     e.preventDefault();
     setErr(""); setInfo(""); setBusy(true);
+    onSetupChange?.(true);
     try {
       const { data: inst, error: instErr } = await supabase
         .from("institutions")
@@ -100,7 +103,9 @@ export default function Login({ onLoggedIn }) {
         return setErr("এই ইমেইল দিয়ে ইতিমধ্যে একটা অ্যাকাউন্ট আছে। নিচে লগইন করুন, অথবা ভিন্ন ইমেইল ব্যবহার করুন।");
       }
       if (!data.session) {
-        setInfo("অ্যাকাউন্ট তৈরি হয়েছে। ইমেইল ভেরিফাই করার পর লগইন করলে যোগদানের অনুরোধ সম্পন্ন হবে।");
+        setInfo("অ্যাকাউন্ট তৈরি হয়েছে। ইমেইল ভেরিফাই করে লগইন করুন — এরপর আবার এই কোড দিয়ে যোগদানের অনুরোধ পাঠান।");
+        setMode("login");
+        return;
       }
 
       const { error: profErr } = await supabase.from("profiles").insert({
@@ -113,11 +118,12 @@ export default function Login({ onLoggedIn }) {
       if (profErr) return setErr(safeMessage(profErr, "যোগদানের অনুরোধ পাঠানো যায়নি।"));
 
       setInfo(`"${inst.name}"-এ যোগদানের অনুরোধ পাঠানো হয়েছে। এডমিন অনুমোদন করলে প্রবেশ করতে পারবেন।`);
-      setMode("login");
+      onLoggedIn(data.session);
     } catch (ex) {
       setErr(safeMessage(ex, "যোগদানের অনুরোধ পাঠানো যায়নি, নেটওয়ার্ক সমস্যা হতে পারে।"));
     } finally {
       setBusy(false);
+      onSetupChange?.(false);
     }
   }
 
