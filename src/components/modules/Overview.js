@@ -1,7 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 
-export default function Overview({ institutionId, inviteCode }) {
+const TILES = [
+  { key: "students", label: "শিক্ষার্থী/সদস্য", icon: "✎", desc: "ভর্তি, তথ্য, পোর্টাল কোড" },
+  { key: "attendance", label: "উপস্থিতি ও হিফজ", icon: "✓", desc: "দৈনিক হাজিরা, অগ্রগতি" },
+  { key: "donations", label: "দান ও যাকাত", icon: "◆", desc: "দান রেকর্ড, নিসাব হিসাব" },
+  { key: "qurbani", label: "কুরবানি হিসাব", icon: "✦", desc: "ভাগ বণ্টন, মাংস বিতরণ" },
+  { key: "accounting", label: "একাউন্টিং", icon: "৳", desc: "আয়-ব্যয়, মাসিক ট্রেন্ড" },
+  { key: "notifications", label: "নোটিফিকেশন", icon: "🔔", desc: "ব্রডকাস্ট, SMS", adminOnly: true },
+  { key: "reports", label: "রিপোর্ট ও এক্সপোর্ট", icon: "⬇", desc: "PDF/Excel ডাউনলোড", adminOnly: true },
+  { key: "members", label: "সদস্য অনুমোদন", icon: "⚑", desc: "স্টাফ যোগদান অনুমোদন", adminOnly: true },
+  { key: "settings", label: "সেটিংস", icon: "⚙", desc: "প্রতিষ্ঠান, লোগো, প্রোফাইল" },
+];
+
+export default function Overview({ institutionId, inviteCode, onNavigate, canEdit }) {
   const [stats, setStats] = useState({ students: 0, presentToday: 0, donationsTotal: 0, pending: 0 });
 
   async function load() {
@@ -58,6 +70,27 @@ export default function Overview({ institutionId, inviteCode }) {
           </button>
         </div>
         <p className="text-xs text-cream/40 mt-2">নতুন এডমিন/ভিউয়ারকে এই কোড দিন — লগইন স্ক্রিনে "কোড দিয়ে যোগ দিন" থেকে যোগ দেবে, এরপর "সদস্য অনুমোদন" ট্যাবে অনুমোদন দিন।</p>
+      </div>
+
+      <div>
+        <div className="text-sm text-cream/50 mb-3">সব ফিচার — এক জায়গায়</div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {TILES.filter((t) => !t.adminOnly || canEdit).map((t) => (
+            <button
+              key={t.key}
+              onClick={() => onNavigate?.(t.key)}
+              className="glass-card rounded-2xl p-5 text-left hover:border-gold-500/30 hover:bg-white/5 transition group"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <span className="w-9 h-9 rounded-xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center text-gold-400 group-hover:bg-gold-500/20">
+                  {t.icon}
+                </span>
+                <span className="font-medium text-cream/90">{t.label}</span>
+              </div>
+              <div className="text-xs text-cream/40">{t.desc}</div>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
