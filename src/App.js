@@ -18,10 +18,12 @@ import NotificationBell from "./components/NotificationBell";
 import GuardianAuth from "./components/GuardianAuth";
 import GuardianPortal from "./components/GuardianPortal";
 import OwnerDashboard from "./components/OwnerDashboard";
+import OwnerAuth from "./components/OwnerAuth";
 
 export default function App() {
   const [showAuth, setShowAuth] = useState(false);
   const [showGuardianAuth, setShowGuardianAuth] = useState(false);
+  const [showOwnerAuth, setShowOwnerAuth] = useState(false);
   const [session, setSession] = useState(undefined); // undefined = checking, null = logged out
   const [profile, setProfile] = useState(null);
   const [profileChecked, setProfileChecked] = useState(false);
@@ -87,6 +89,7 @@ export default function App() {
     setSession(null);
     setShowAuth(false);
     setShowGuardianAuth(false);
+    setShowOwnerAuth(false);
     setForceGuardianView(false);
   }
 
@@ -110,10 +113,17 @@ export default function App() {
     if (showGuardianAuth) {
       return <GuardianAuth onLoggedIn={setSession} onBack={() => setShowGuardianAuth(false)} />;
     }
+    if (showOwnerAuth) {
+      return <OwnerAuth onLoggedIn={setSession} onBack={() => setShowOwnerAuth(false)} />;
+    }
     return showAuth ? (
       <Login onLoggedIn={setSession} />
     ) : (
-      <Landing onGetStarted={() => setShowAuth(true)} onGuardianPortal={() => setShowGuardianAuth(true)} />
+      <Landing
+        onGetStarted={() => setShowAuth(true)}
+        onGuardianPortal={() => setShowGuardianAuth(true)}
+        onOwnerPortal={() => setShowOwnerAuth(true)}
+      />
     );
   }
 
