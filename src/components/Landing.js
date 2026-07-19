@@ -26,7 +26,9 @@ export default function Landing({ onGetStarted, onGuardianPortal, onOwnerPortal 
       <div className="relative z-10">
         {/* Nav */}
         <nav className="max-w-6xl mx-auto flex items-center justify-between px-6 py-6">
-          <div className="font-display text-xl text-gold-400">মানারাহ.</div>
+          <button onClick={onOwnerPortal} className="font-display text-2xl sm:text-3xl text-gold-400 hover:text-gold-300 transition">
+            মানারাহ
+          </button>
           <div className="hidden md:flex items-center gap-8 text-sm text-cream/70">
             <a href="#home" className="text-gold-400">হোম</a>
             <a href="#features" className="hover:text-gold-300">ফিচার</a>
@@ -37,7 +39,7 @@ export default function Landing({ onGetStarted, onGuardianPortal, onOwnerPortal 
             <button onClick={onGuardianPortal} className="hidden sm:block text-xs text-cream/50 hover:text-gold-300 transition">
               অভিভাবক পোর্টাল
             </button>
-            <button onClick={onGetStarted} className="text-sm bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold px-4 py-2 rounded-full transition">
+            <button onClick={onGetStarted} className="text-base sm:text-lg bg-gold-500 hover:bg-gold-400 text-ink-950 font-bold px-5 py-2.5 rounded-full transition">
               লগইন
             </button>
           </div>
@@ -121,7 +123,6 @@ export default function Landing({ onGetStarted, onGuardianPortal, onOwnerPortal 
         <footer className="max-w-6xl mx-auto px-6 py-10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-cream/40 border-t border-gold-500/10">
           <span>© মানারাহ — মসজিদ ও মাদ্রাসার জন্য তৈরি</span>
           <span>শতভাগ শরীয়াহ্‌সম্মত, সুদমুক্ত সাবস্ক্রিপশন মডেল</span>
-          <button onClick={onOwnerPortal} className="text-cream/25 hover:text-cream/50 transition">প্ল্যাটফর্ম ওনার</button>
         </footer>
       </div>
     </div>
