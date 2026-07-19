@@ -7,6 +7,7 @@ import Toast from "./components/Toast";
 import Overview from "./components/modules/Overview";
 import Students from "./components/modules/Students";
 import Attendance from "./components/modules/Attendance";
+import FeeCollection from "./components/modules/FeeCollection";
 import Donations from "./components/modules/Donations";
 import Accounting from "./components/modules/Accounting";
 import Qurbani from "./components/modules/Qurbani";
@@ -271,6 +272,7 @@ export default function App() {
           {active === "overview" && <Overview institutionId={profile.institution_id} inviteCode={institution?.invite_code} onNavigate={setActive} canEdit={canEdit} />}
           {active === "students" && <Students institutionId={profile.institution_id} canEdit={canEdit} onToast={showToast} />}
           {active === "attendance" && <Attendance institutionId={profile.institution_id} canEdit={canEdit} onToast={showToast} />}
+          {active === "fees" && <FeeCollection institutionId={profile.institution_id} canEdit={canEdit} onToast={showToast} />}
           {active === "donations" && <Donations institutionId={profile.institution_id} canEdit={canEdit} onToast={showToast} />}
           {active === "qurbani" && <Qurbani institutionId={profile.institution_id} canEdit={canEdit} onToast={showToast} />}
           {active === "accounting" && <Accounting institutionId={profile.institution_id} canEdit={canEdit} onToast={showToast} />}
