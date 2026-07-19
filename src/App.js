@@ -28,6 +28,8 @@ export default function App() {
   const [institution, setInstitution] = useState(null);
   const [isPlatformAdmin, setIsPlatformAdmin] = useState(false);
   const [ownerMode, setOwnerMode] = useState(false);
+  const [guardianLinkCount, setGuardianLinkCount] = useState(null);
+  const [forceGuardianView, setForceGuardianView] = useState(false);
   const [active, setActive] = useState("overview");
   const [toast, setToast] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -46,20 +48,30 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!session) { setProfile(null); setInstitution(null); setProfileChecked(false); setIsPlatformAdmin(false); return; }
+    if (!session) { setProfile(null); setInstitution(null); setProfileChecked(false); setIsPlatformAdmin(false); setGuardianLinkCount(null); return; }
     setProfileChecked(false);
     (async () => {
-      const [{ data: prof }, { data: owner }] = await Promise.all([
+      const [profRes, ownerRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", session.user.id).maybeSingle(),
         supabase.from("platform_admins").select("id").eq("id", session.user.id).maybeSingle(),
       ]);
-      setProfile(prof || null);
-      setIsPlatformAdmin(!!owner);
-      setOwnerMode(!!owner);
-      if (prof?.institution_id) {
-        const { data: inst } = await supabase.from("institutions").select("*").eq("id", prof.institution_id).maybeSingle();
+      if (profRes.error) console.warn("profiles lookup:", profRes.error);
+      if (ownerRes.error) console.warn("platform_admins lookup (migration 5 লাগানো হয়েছে কি?):", ownerRes.error);
+
+      setProfile(profRes.data || null);
+      setIsPlatformAdmin(!!ownerRes.data);
+      setOwnerMode(!!ownerRes.data);
+
+      if (profRes.data?.institution_id) {
+        const { data: inst } = await supabase.from("institutions").select("*").eq("id", profRes.data.institution_id).maybeSingle();
         setInstitution(inst || null);
       }
+
+      if (!profRes.data && !ownerRes.data) {
+        const { count } = await supabase.from("guardian_links").select("id", { count: "exact", head: true });
+        setGuardianLinkCount(count || 0);
+      }
+
       setProfileChecked(true);
     })();
   }, [session]);
@@ -75,6 +87,7 @@ export default function App() {
     setSession(null);
     setShowAuth(false);
     setShowGuardianAuth(false);
+    setForceGuardianView(false);
   }
 
   if (!supabase) {
@@ -119,7 +132,29 @@ export default function App() {
   }
 
   if (!profile) {
-    return <GuardianPortal onLogout={handleLogout} />;
+    if (guardianLinkCount === null) {
+      return <div className="min-h-screen bg-ink-950 flex items-center justify-center text-cream/40">লোড হচ্ছে...</div>;
+    }
+    if (guardianLinkCount > 0 || forceGuardianView) {
+      return <GuardianPortal onLogout={handleLogout} />;
+    }
+    return (
+      <div className="min-h-screen bg-ink-950 flex items-center justify-center px-6 text-center">
+        <div className="glass-card rounded-3xl p-10 max-w-md space-y-4">
+          <div className="font-display text-xl text-gold-400">এই অ্যাকাউন্টে কোনো ভূমিকা পাওয়া যায়নি</div>
+          <p className="text-sm text-cream/50 leading-relaxed">
+            এই ইমেইল ({session.user.email}) কোনো প্রতিষ্ঠানের স্টাফ না, প্ল্যাটফর্ম ওনার না, আর কোনো সন্তানও লিংক করা নেই।
+            যদি তুমি অভিভাবক হও, নিচের বাটনে গিয়ে সন্তানের পোর্টাল কোড দিয়ে লিংক করো। স্টাফ/এডমিন হতে চাইলে সঠিক ইমেইল দিয়ে লগইন করো অথবা ইনভাইট কোড দিয়ে যোগ দাও।
+          </p>
+          <div className="flex flex-col gap-2">
+            <button onClick={() => setForceGuardianView(true)} className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold rounded-xl py-2.5 text-sm">
+              অভিভাবক পোর্টালে যাই (সন্তান লিংক করি)
+            </button>
+            <button onClick={handleLogout} className="text-xs text-cream/50 hover:text-red-300 pt-1">লগআউট</button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (profile.status === "pending") {
