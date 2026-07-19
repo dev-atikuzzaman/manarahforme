@@ -179,7 +179,11 @@ export default function App() {
             এই ইমেইল ({session.user.email}) কোনো প্রতিষ্ঠানের স্টাফ না, প্ল্যাটফর্ম ওনার না, আর কোনো সন্তানও লিংক করা নেই।
             যদি তুমি অভিভাবক হও, নিচের বাটনে গিয়ে সন্তানের পোর্টাল কোড দিয়ে লিংক করো। স্টাফ/এডমিন হতে চাইলে সঠিক ইমেইল দিয়ে লগইন করো অথবা ইনভাইট কোড দিয়ে যোগ দাও।
           </p>
+          <p className="text-[11px] text-cream/25 break-all">User ID: {session.user.id}</p>
           <div className="flex flex-col gap-2">
+            <button onClick={() => setRefreshTick((t) => t + 1)} className="text-xs border border-gold-500/30 text-gold-400 hover:bg-white/5 rounded-xl py-2">
+              আবার চেক করুন
+            </button>
             <button onClick={() => setForceGuardianView(true)} className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold rounded-xl py-2.5 text-sm">
               অভিভাবক পোর্টালে যাই (সন্তান লিংক করি)
             </button>
@@ -264,7 +268,7 @@ export default function App() {
         </div>
 
         <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-          {active === "overview" && <Overview institutionId={profile.institution_id} inviteCode={institution?.invite_code} />}
+          {active === "overview" && <Overview institutionId={profile.institution_id} inviteCode={institution?.invite_code} onNavigate={setActive} canEdit={canEdit} />}
           {active === "students" && <Students institutionId={profile.institution_id} canEdit={canEdit} onToast={showToast} />}
           {active === "attendance" && <Attendance institutionId={profile.institution_id} canEdit={canEdit} onToast={showToast} />}
           {active === "donations" && <Donations institutionId={profile.institution_id} canEdit={canEdit} onToast={showToast} />}
