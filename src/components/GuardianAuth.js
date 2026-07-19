@@ -1,6 +1,18 @@
 import React, { useState } from "react";
 import { supabase } from "../lib/supabase";
 
+function safeMessage(error, fallback) {
+  if (!error) return fallback;
+  if (typeof error === "string" && error.trim()) return error;
+  const msg = error.message || error.error_description || error.msg;
+  if (typeof msg === "string" && msg.trim() && msg.trim() !== "{}") return msg;
+  try {
+    const raw = JSON.stringify(error);
+    if (raw && raw !== "{}" && raw !== "null") return `${fallback} [${raw.slice(0, 120)}]`;
+  } catch (_) {}
+  return fallback;
+}
+
 export default function GuardianAuth({ onLoggedIn, onBack }) {
   const [mode, setMode] = useState("login"); // login | signup
   const [email, setEmail] = useState("");
@@ -13,29 +25,42 @@ export default function GuardianAuth({ onLoggedIn, onBack }) {
   async function handleLogin(e) {
     e.preventDefault();
     setErr(""); setBusy(true);
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    setBusy(false);
-    if (error) return setErr(error.message);
-    onLoggedIn(data.session);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) return setErr(safeMessage(error, "লগইন ব্যর্থ হয়েছে। ইমেইল/পাসওয়ার্ড চেক করুন।"));
+      onLoggedIn(data.session);
+    } catch (ex) {
+      setErr(safeMessage(ex, "লগইন করা যায়নি, নেটওয়ার্ক সমস্যা হতে পারে।"));
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function handleSignup(e) {
     e.preventDefault();
     setErr(""); setInfo(""); setBusy(true);
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) { setBusy(false); return setErr(error.message); }
+    try {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) return setErr(safeMessage(error, "সাইন আপ ব্যর্থ হয়েছে, আবার চেষ্টা করুন।"));
+      if (!data?.user) return setErr("অ্যাকাউন্ট তৈরি করা যায়নি। ইমেইলটা আগে ব্যবহৃত হয়ে থাকতে পারে।");
+      if (data.user.identities && data.user.identities.length === 0) {
+        return setErr("এই ইমেইল দিয়ে ইতিমধ্যে একটা অ্যাকাউন্ট আছে। নিচে লগইন করুন।");
+      }
 
-    if (!data.session) {
+      if (!data.session) {
+        setInfo("অ্যাকাউন্ট তৈরি হয়েছে। ইমেইল ভেরিফাই করে লগইন করুন, এরপর সন্তানের কোড দিয়ে লিংক করুন।");
+        setMode("login");
+        return;
+      }
+
+      const { error: linkErr } = await supabase.rpc("link_guardian_to_student", { p_code: code });
+      if (linkErr) return setErr(safeMessage(linkErr, "কোড দিয়ে লিংক করা যায়নি।"));
+      onLoggedIn(data.session);
+    } catch (ex) {
+      setErr(safeMessage(ex, "সাইন আপ করা যায়নি, নেটওয়ার্ক সমস্যা হতে পারে।"));
+    } finally {
       setBusy(false);
-      setInfo("অ্যাকাউন্ট তৈরি হয়েছে। ইমেইল ভেরিফাই করে লগইন করুন, এরপর সন্তানের কোড দিয়ে লিংক করুন।");
-      setMode("login");
-      return;
     }
-
-    const { error: linkErr } = await supabase.rpc("link_guardian_to_student", { p_code: code });
-    setBusy(false);
-    if (linkErr) return setErr(linkErr.message);
-    onLoggedIn(data.session);
   }
 
   return (

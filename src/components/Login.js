@@ -1,6 +1,20 @@
 import React, { useState } from "react";
 import { supabase } from "../lib/supabase";
 
+// error.message কখনো কখনো ফাঁকা অবজেক্ট ("{}") বা খালি স্ট্রিং হয়ে আসে (নেটওয়ার্ক/CORS/কনফিগারেশন
+// সমস্যায়) — এই ফাংশন সবসময় একটা বোঝা যায় এমন বার্তা নিশ্চিত করে, আর ডিবাগের জন্য raw ডাটা যোগ করে।
+function safeMessage(error, fallback) {
+  if (!error) return fallback;
+  if (typeof error === "string" && error.trim()) return error;
+  const msg = error.message || error.error_description || error.msg;
+  if (typeof msg === "string" && msg.trim() && msg.trim() !== "{}") return msg;
+  try {
+    const raw = JSON.stringify(error);
+    if (raw && raw !== "{}" && raw !== "null") return `${fallback} [${raw.slice(0, 120)}]`;
+  } catch (_) {}
+  return `${fallback} — এটা বারবার হলে ইন্টারনেট সংযোগ ও Vercel-এর REACT_APP_SUPABASE_URL / REACT_APP_SUPABASE_ANON_KEY ঠিক আছে কিনা যাচাই করুন।`;
+}
+
 export default function Login({ onLoggedIn }) {
   const [mode, setMode] = useState("login"); // login | create | join
   const [email, setEmail] = useState("");
@@ -15,73 +29,96 @@ export default function Login({ onLoggedIn }) {
   async function handleLogin(e) {
     e.preventDefault();
     setErr(""); setBusy(true);
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    setBusy(false);
-    if (error) return setErr(error.message || "লগইন ব্যর্থ হয়েছে। ইমেইল/পাসওয়ার্ড চেক করুন।");
-    onLoggedIn(data.session);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) return setErr(safeMessage(error, "লগইন ব্যর্থ হয়েছে। ইমেইল/পাসওয়ার্ড চেক করুন।"));
+      onLoggedIn(data.session);
+    } catch (ex) {
+      setErr(safeMessage(ex, "লগইন করা যায়নি, নেটওয়ার্ক সমস্যা হতে পারে।"));
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function handleCreateInstitution(e) {
     e.preventDefault();
     setErr(""); setInfo(""); setBusy(true);
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) { setBusy(false); return setErr(error.message || "সাইন আপ ব্যর্থ হয়েছে, আবার চেষ্টা করুন।"); }
-    if (!data?.user) { setBusy(false); return setErr("অ্যাকাউন্ট তৈরি করা যায়নি। ইমেইলটা আগে ব্যবহৃত হয়ে থাকতে পারে।"); }
-    if (data.user.identities && data.user.identities.length === 0) {
+    try {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) return setErr(safeMessage(error, "সাইন আপ ব্যর্থ হয়েছে, আবার চেষ্টা করুন।"));
+      if (!data?.user) return setErr("অ্যাকাউন্ট তৈরি করা যায়নি। ইমেইলটা আগে ব্যবহৃত হয়ে থাকতে পারে।");
+      if (data.user.identities && data.user.identities.length === 0) {
+        return setErr("এই ইমেইল দিয়ে ইতিমধ্যে একটা অ্যাকাউন্ট আছে। নিচে লগইন করুন, অথবা ভিন্ন ইমেইল ব্যবহার করুন।");
+      }
+      if (!data.session) {
+        setInfo("অ্যাকাউন্ট তৈরি হয়েছে। ইমেইলে পাঠানো লিংক দিয়ে ভেরিফাই করে তারপর লগইন করুন — ভেরিফাই না করলে প্রতিষ্ঠান তৈরি সম্পন্ন হবে না।");
+        setMode("login");
+        return;
+      }
+
+      const code = Math.random().toString(36).slice(2, 8).toUpperCase();
+      const { data: inst, error: instErr } = await supabase
+        .from("institutions")
+        .insert({ name: institutionName, invite_code: code })
+        .select()
+        .single();
+      if (instErr) return setErr(safeMessage(instErr, "প্রতিষ্ঠান তৈরি করা যায়নি।"));
+
+      const { error: profErr } = await supabase.from("profiles").insert({
+        id: data.user.id,
+        full_name: fullName,
+        institution_id: inst.id,
+        role: "super_admin",
+        status: "approved",
+      });
+      if (profErr) return setErr(safeMessage(profErr, "প্রোফাইল তৈরি করা যায়নি।"));
+
+      setInfo(`প্রতিষ্ঠান তৈরি হয়েছে। ইনভাইট কোড: ${code} — এটা সংরক্ষণ করুন। এখন লগইন করুন।`);
+      setMode("login");
+    } catch (ex) {
+      setErr(safeMessage(ex, "প্রতিষ্ঠান তৈরি করা যায়নি, নেটওয়ার্ক সমস্যা হতে পারে।"));
+    } finally {
       setBusy(false);
-      return setErr("এই ইমেইল দিয়ে ইতিমধ্যে একটা অ্যাকাউন্ট আছে। নিচে লগইন করুন, অথবা ভিন্ন ইমেইল ব্যবহার করুন।");
     }
-
-    const code = Math.random().toString(36).slice(2, 8).toUpperCase();
-    const { data: inst, error: instErr } = await supabase
-      .from("institutions")
-      .insert({ name: institutionName, invite_code: code })
-      .select()
-      .single();
-    if (instErr) { setBusy(false); return setErr(instErr.message || "প্রতিষ্ঠান তৈরি করা যায়নি।"); }
-
-    const { error: profErr } = await supabase.from("profiles").insert({
-      id: data.user.id,
-      full_name: fullName,
-      institution_id: inst.id,
-      role: "super_admin",
-      status: "approved",
-    });
-    setBusy(false);
-    if (profErr) return setErr(profErr.message || "প্রোফাইল তৈরি করা যায়নি।");
-    setInfo(`প্রতিষ্ঠান তৈরি হয়েছে। ইনভাইট কোড: ${code} — এটা সংরক্ষণ করুন, নতুন সদস্যরা এই কোড দিয়ে যোগ দেবে। ইমেইল ভেরিফাই করে লগইন করুন।`);
-    setMode("login");
   }
 
   async function handleJoin(e) {
     e.preventDefault();
     setErr(""); setInfo(""); setBusy(true);
-    const { data: inst, error: instErr } = await supabase
-      .from("institutions")
-      .select("id, name")
-      .eq("invite_code", joinCode.trim().toUpperCase())
-      .maybeSingle();
-    if (instErr || !inst) { setBusy(false); return setErr("এই কোডে কোনো প্রতিষ্ঠান পাওয়া যায়নি।"); }
+    try {
+      const { data: inst, error: instErr } = await supabase
+        .from("institutions")
+        .select("id, name")
+        .eq("invite_code", joinCode.trim().toUpperCase())
+        .maybeSingle();
+      if (instErr || !inst) return setErr("এই কোডে কোনো প্রতিষ্ঠান পাওয়া যায়নি।");
 
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) { setBusy(false); return setErr(error.message || "সাইন আপ ব্যর্থ হয়েছে, আবার চেষ্টা করুন।"); }
-    if (!data?.user) { setBusy(false); return setErr("অ্যাকাউন্ট তৈরি করা যায়নি। ইমেইলটা আগে ব্যবহৃত হয়ে থাকতে পারে।"); }
-    if (data.user.identities && data.user.identities.length === 0) {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) return setErr(safeMessage(error, "সাইন আপ ব্যর্থ হয়েছে, আবার চেষ্টা করুন।"));
+      if (!data?.user) return setErr("অ্যাকাউন্ট তৈরি করা যায়নি। ইমেইলটা আগে ব্যবহৃত হয়ে থাকতে পারে।");
+      if (data.user.identities && data.user.identities.length === 0) {
+        return setErr("এই ইমেইল দিয়ে ইতিমধ্যে একটা অ্যাকাউন্ট আছে। নিচে লগইন করুন, অথবা ভিন্ন ইমেইল ব্যবহার করুন।");
+      }
+      if (!data.session) {
+        setInfo("অ্যাকাউন্ট তৈরি হয়েছে। ইমেইল ভেরিফাই করার পর লগইন করলে যোগদানের অনুরোধ সম্পন্ন হবে।");
+      }
+
+      const { error: profErr } = await supabase.from("profiles").insert({
+        id: data.user.id,
+        full_name: fullName,
+        institution_id: inst.id,
+        role: "viewer",
+        status: "pending",
+      });
+      if (profErr) return setErr(safeMessage(profErr, "যোগদানের অনুরোধ পাঠানো যায়নি।"));
+
+      setInfo(`"${inst.name}"-এ যোগদানের অনুরোধ পাঠানো হয়েছে। এডমিন অনুমোদন করলে প্রবেশ করতে পারবেন।`);
+      setMode("login");
+    } catch (ex) {
+      setErr(safeMessage(ex, "যোগদানের অনুরোধ পাঠানো যায়নি, নেটওয়ার্ক সমস্যা হতে পারে।"));
+    } finally {
       setBusy(false);
-      return setErr("এই ইমেইল দিয়ে ইতিমধ্যে একটা অ্যাকাউন্ট আছে। নিচে লগইন করুন, অথবা ভিন্ন ইমেইল ব্যবহার করুন।");
     }
-
-    const { error: profErr } = await supabase.from("profiles").insert({
-      id: data.user.id,
-      full_name: fullName,
-      institution_id: inst.id,
-      role: "viewer",
-      status: "pending",
-    });
-    setBusy(false);
-    if (profErr) return setErr(profErr.message || "যোগদানের অনুরোধ পাঠানো যায়নি।");
-    setInfo(`"${inst.name}"-এ যোগদানের অনুরোধ পাঠানো হয়েছে। এডমিন অনুমোদন করলে প্রবেশ করতে পারবেন।`);
-    setMode("login");
   }
 
   return (
@@ -102,7 +139,7 @@ export default function Login({ onLoggedIn }) {
         </div>
 
         {err && (
-          <div className="mb-4 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 text-sm">
+          <div className="mb-4 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 text-sm break-words">
             {err}
           </div>
         )}
