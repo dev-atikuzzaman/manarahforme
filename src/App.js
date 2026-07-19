@@ -19,11 +19,15 @@ import GuardianAuth from "./components/GuardianAuth";
 import GuardianPortal from "./components/GuardianPortal";
 import OwnerDashboard from "./components/OwnerDashboard";
 import OwnerAuth from "./components/OwnerAuth";
+import ResetPassword from "./components/ResetPassword";
 
 export default function App() {
   const [showAuth, setShowAuth] = useState(false);
   const [showGuardianAuth, setShowGuardianAuth] = useState(false);
   const [showOwnerAuth, setShowOwnerAuth] = useState(false);
+  const [pendingSetup, setPendingSetup] = useState(false);
+  const [refreshTick, setRefreshTick] = useState(0);
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
   const [session, setSession] = useState(undefined); // undefined = checking, null = logged out
   const [profile, setProfile] = useState(null);
   const [profileChecked, setProfileChecked] = useState(false);
@@ -45,7 +49,10 @@ export default function App() {
   useEffect(() => {
     if (!supabase) { setSession(null); return; }
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
-    const { data: listener } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
+    const { data: listener } = supabase.auth.onAuthStateChange((event, s) => {
+      if (event === "PASSWORD_RECOVERY") setPasswordRecovery(true);
+      setSession(s);
+    });
     return () => listener.subscription.unsubscribe();
   }, []);
 
@@ -76,7 +83,17 @@ export default function App() {
 
       setProfileChecked(true);
     })();
-  }, [session]);
+  }, [session, refreshTick]);
+
+  // signUp() নিজেই একটা সেশন তৈরি করে ফেলে, যার ফলে global auth listener সাথে সাথে ফায়ার হয় —
+  // কিন্তু ততক্ষণে Login/OwnerAuth/GuardianAuth হয়তো এখনো institution/profile/owner তৈরি করছে।
+  // pendingSetup সত্যি থাকা অবস্থায় App.js এই "মাঝপথের" সেশন দেখে আগেভাগে ড্যাশবোর্ড/গার্ডিয়ান
+  // স্ক্রিনে চলে যায় না — auth ফর্মটাই মাউন্ট করা থাকে যতক্ষণ না পুরো সেটআপ শেষ হয়।
+  function handleLoggedIn(newSession) {
+    setPendingSetup(false);
+    setSession(newSession);
+    setRefreshTick((t) => t + 1);
+  }
 
   function showToast(t) {
     setToast(t);
@@ -91,6 +108,8 @@ export default function App() {
     setShowGuardianAuth(false);
     setShowOwnerAuth(false);
     setForceGuardianView(false);
+    setPendingSetup(false);
+    setPasswordRecovery(false);
   }
 
   if (!supabase) {
@@ -109,15 +128,19 @@ export default function App() {
     return <div className="min-h-screen bg-ink-950 flex items-center justify-center text-cream/40">লোড হচ্ছে...</div>;
   }
 
-  if (!session) {
+  if (passwordRecovery) {
+    return <ResetPassword onDone={() => setPasswordRecovery(false)} />;
+  }
+
+  if (!session || pendingSetup) {
     if (showGuardianAuth) {
-      return <GuardianAuth onLoggedIn={setSession} onBack={() => setShowGuardianAuth(false)} />;
+      return <GuardianAuth onLoggedIn={handleLoggedIn} onSetupChange={setPendingSetup} onBack={() => setShowGuardianAuth(false)} />;
     }
     if (showOwnerAuth) {
-      return <OwnerAuth onLoggedIn={setSession} onBack={() => setShowOwnerAuth(false)} />;
+      return <OwnerAuth onLoggedIn={handleLoggedIn} onSetupChange={setPendingSetup} onBack={() => setShowOwnerAuth(false)} />;
     }
     return showAuth ? (
-      <Login onLoggedIn={setSession} />
+      <Login onLoggedIn={handleLoggedIn} onSetupChange={setPendingSetup} />
     ) : (
       <Landing
         onGetStarted={() => setShowAuth(true)}
