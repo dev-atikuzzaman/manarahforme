@@ -16,7 +16,7 @@ const PREMIUM = [
   "হিফজ অগ্রগতির ভিজ্যুয়াল চার্ট ও রিপোর্ট এক্সপোর্ট (PDF/Excel)",
 ];
 
-export default function Landing({ onGetStarted, onGuardianPortal }) {
+export default function Landing({ onGetStarted, onGuardianPortal, onOwnerPortal }) {
   return (
     <div className="min-h-screen bg-ink-950 bg-radial-fade relative overflow-x-hidden text-cream">
       <div className="blob w-96 h-96 bg-gold-500 -top-24 -left-24" />
@@ -121,6 +121,7 @@ export default function Landing({ onGetStarted, onGuardianPortal }) {
         <footer className="max-w-6xl mx-auto px-6 py-10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-cream/40 border-t border-gold-500/10">
           <span>© মানারাহ — মসজিদ ও মাদ্রাসার জন্য তৈরি</span>
           <span>শতভাগ শরীয়াহ্‌সম্মত, সুদমুক্ত সাবস্ক্রিপশন মডেল</span>
+          <button onClick={onOwnerPortal} className="text-cream/25 hover:text-cream/50 transition">প্ল্যাটফর্ম ওনার</button>
         </footer>
       </div>
     </div>

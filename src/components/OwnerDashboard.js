@@ -14,6 +14,9 @@ export default function OwnerDashboard({ onSwitchToInstitution, hasOwnInstitutio
   const [expanded, setExpanded] = useState(null);
   const [details, setDetails] = useState({});
   const [query, setQuery] = useState("");
+  const [ownerEmail, setOwnerEmail] = useState("");
+  const [addingOwner, setAddingOwner] = useState(false);
+  const [ownerMsg, setOwnerMsg] = useState(null);
 
   async function load() {
     setLoading(true);
@@ -68,6 +71,17 @@ export default function OwnerDashboard({ onSwitchToInstitution, hasOwnInstitutio
     if (error) alert(error.message);
   }
 
+  async function handleAddOwner(e) {
+    e.preventDefault();
+    setAddingOwner(true);
+    setOwnerMsg(null);
+    const { error } = await supabase.rpc("add_platform_admin", { p_email: ownerEmail });
+    setAddingOwner(false);
+    if (error) return setOwnerMsg({ ok: false, text: error.message });
+    setOwnerMsg({ ok: true, text: `${ownerEmail} এখন প্ল্যাটফর্ম ওনার।` });
+    setOwnerEmail("");
+  }
+
   const filtered = institutions.filter((i) => i.name.toLowerCase().includes(query.toLowerCase()));
 
   const summary = useMemo(() => {
@@ -105,6 +119,26 @@ export default function OwnerDashboard({ onSwitchToInstitution, hasOwnInstitutio
           <div className="glass-card rounded-2xl p-5"><div className="text-cream/40 text-xs mb-1">ট্রায়ালে</div><div className="text-2xl font-display text-gold-300">{summary.trial}</div></div>
           <div className="glass-card rounded-2xl p-5"><div className="text-cream/40 text-xs mb-1">স্থগিত</div><div className="text-2xl font-display text-red-400">{summary.suspended}</div></div>
         </div>
+
+        <form onSubmit={handleAddOwner} className="glass-card rounded-2xl p-5 mb-6 flex flex-wrap gap-3 items-start">
+          <div className="flex-1 min-w-[200px]">
+            <div className="text-sm text-cream/60 mb-2">আরেকজনকে প্ল্যাটফর্ম ওনার বানান</div>
+            <input
+              placeholder="ইমেইল (আগে থেকেই অ্যাকাউন্ট থাকতে হবে)"
+              type="email"
+              className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm"
+              value={ownerEmail}
+              onChange={(e) => setOwnerEmail(e.target.value)}
+              required
+            />
+            {ownerMsg && (
+              <p className={`text-xs mt-2 ${ownerMsg.ok ? "text-emerald-400" : "text-red-400"}`}>{ownerMsg.text}</p>
+            )}
+          </div>
+          <button disabled={addingOwner} className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold px-4 py-2 rounded-xl text-sm self-end disabled:opacity-50">
+            {addingOwner ? "..." : "ওনার বানান"}
+          </button>
+        </form>
 
         <input
           placeholder="প্রতিষ্ঠানের নাম দিয়ে খুঁজুন..."
