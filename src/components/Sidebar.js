@@ -5,6 +5,7 @@ const NAV = [
   { key: "students", label: "শিক্ষার্থী/সদস্য", icon: "✎" },
   { key: "attendance", label: "উপস্থিতি ও হিফজ", icon: "✓" },
   { key: "fees", label: "ফি সংগ্রহ", icon: "৳" },
+  { key: "hifz", label: "হিফজ প্রগ্রেস", icon: "📈" },
   { key: "donations", label: "দান ও যাকাত", icon: "◆" },
   { key: "qurbani", label: "কুরবানি হিসাব", icon: "✦" },
   { key: "accounting", label: "একাউন্টিং", icon: "৳" },
