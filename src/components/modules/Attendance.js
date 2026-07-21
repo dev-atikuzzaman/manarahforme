@@ -48,6 +48,17 @@ export default function Attendance({ institutionId, canEdit, onToast }) {
     if (error) onToast({ type: "error", message: error.message });
   }
 
+  async function updateHifzPages(studentId, value) {
+    if (!canEdit) return;
+    const hifz_pages = value === "" ? null : Number(value);
+    const existing = records[studentId];
+    const payload = { institution_id: institutionId, student_id: studentId, date, hifz_pages, status: existing?.status || "present" };
+    const { error } = existing
+      ? await supabase.from("attendance").update(payload).eq("id", existing.id)
+      : await supabase.from("attendance").insert(payload);
+    if (error) onToast({ type: "error", message: error.message });
+  }
+
   const presentCount = Object.values(records).filter((r) => r.status === "present").length;
 
   return (
@@ -67,12 +78,13 @@ export default function Attendance({ institutionId, canEdit, onToast }) {
                 <th className="px-4 py-3 font-medium">নাম</th>
                 <th className="px-4 py-3 font-medium">ক্লাস</th>
                 <th className="px-4 py-3 font-medium">উপস্থিতি</th>
-                <th className="px-4 py-3 font-medium">হিফজ অগ্রগতি (পৃষ্ঠা/পারা)</th>
+                <th className="px-4 py-3 font-medium">হিফজ অগ্রগতি (নোট)</th>
+                <th className="px-4 py-3 font-medium">মোট পৃষ্ঠা (চার্টের জন্য)</th>
               </tr>
             </thead>
             <tbody>
-              {loading && <tr><td colSpan={4} className="px-4 py-6 text-center text-cream/40">লোড হচ্ছে...</td></tr>}
-              {!loading && students.length === 0 && <tr><td colSpan={4} className="px-4 py-6 text-center text-cream/40">প্রথমে "শিক্ষার্থী/সদস্য" ট্যাব থেকে শিক্ষার্থী যোগ করুন।</td></tr>}
+              {loading && <tr><td colSpan={5} className="px-4 py-6 text-center text-cream/40">লোড হচ্ছে...</td></tr>}
+              {!loading && students.length === 0 && <tr><td colSpan={5} className="px-4 py-6 text-center text-cream/40">প্রথমে "শিক্ষার্থী/সদস্য" ট্যাব থেকে শিক্ষার্থী যোগ করুন।</td></tr>}
               {students.map((s) => {
                 const rec = records[s.id];
                 return (
@@ -106,6 +118,16 @@ export default function Attendance({ institutionId, canEdit, onToast }) {
                         onBlur={(e) => updateHifz(s.id, e.target.value)}
                         placeholder="যেমন: সূরা বাকারা, পৃ. ১২"
                         className="bg-ink-900/60 border border-gold-500/20 rounded-lg px-2 py-1.5 text-xs w-full max-w-[200px]"
+                      />
+                    </td>
+                    <td className="px-4 py-3">
+                      <input
+                        disabled={!canEdit}
+                        type="number"
+                        defaultValue={rec?.hifz_pages ?? ""}
+                        onBlur={(e) => updateHifzPages(s.id, e.target.value)}
+                        placeholder="সর্বমোট পৃষ্ঠা"
+                        className="bg-ink-900/60 border border-gold-500/20 rounded-lg px-2 py-1.5 text-xs w-24"
                       />
                     </td>
                   </tr>
