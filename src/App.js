@@ -45,6 +45,31 @@ export default function App() {
   const [toast, setToast] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // ব্যাক বাটন চাপলে সরাসরি অ্যাপ থেকে বের হয়ে না গিয়ে আগের ট্যাবে (বা আগের শাখায়) ফিরে যাক —
+  // এজন্য প্রতিটা ট্যাব-বদল/শাখা-বদল ব্রাউজার হিস্ট্রিতে একটা এন্ট্রি যোগ করে, আর ব্যাক বাটনে
+  // (popstate) সেই এন্ট্রি অনুযায়ী state ফিরিয়ে আনা হয়, পুরো অ্যাপ আনমাউন্ট হয় না।
+  function navigate(tab) {
+    if (tab === active) return;
+    window.history.pushState({ manarahTab: tab, manarahBranch: activeBranchId }, "", `#${tab}`);
+    setActive(tab);
+  }
+
+  function switchBranch(branchId) {
+    if (branchId === activeBranchId) return;
+    window.history.pushState({ manarahTab: active, manarahBranch: branchId }, "", `#${active}`);
+    setActiveBranchId(branchId);
+  }
+
+  useEffect(() => {
+    function handlePopState(e) {
+      setActive(e.state?.manarahTab || "overview");
+      setActiveBranchId(e.state?.manarahBranch || null);
+    }
+    window.history.replaceState({ manarahTab: "overview", manarahBranch: null }, "", "#overview");
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").catch(() => {});
@@ -124,6 +149,8 @@ export default function App() {
     setPendingSetup(false);
     setPasswordRecovery(false);
     setActiveBranchId(null);
+    setActive("overview");
+    window.history.replaceState({ manarahTab: "overview", manarahBranch: null }, "", "#overview");
   }
 
   if (!supabase) {
@@ -265,7 +292,7 @@ export default function App() {
     <div className="min-h-screen bg-ink-950 bg-radial-fade flex">
       <Sidebar
         active={active}
-        onChange={setActive}
+        onChange={navigate}
         institutionName={viewInstitution?.name || ""}
         role={profile.role}
         onLogout={handleLogout}
@@ -276,7 +303,7 @@ export default function App() {
         branches={branches}
         activeBranchId={activeBranchId}
         homeInstitutionName={institution?.name}
-        onSwitchBranch={setActiveBranchId}
+        onSwitchBranch={switchBranch}
       />
 
       <div className="flex-1 min-w-0">
@@ -288,7 +315,7 @@ export default function App() {
         </div>
 
         <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-          {active === "overview" && <Overview institutionId={viewInstitution?.id} inviteCode={viewInstitution?.invite_code} onNavigate={setActive} canEdit={canEdit} />}
+          {active === "overview" && <Overview institutionId={viewInstitution?.id} inviteCode={viewInstitution?.invite_code} onNavigate={navigate} canEdit={canEdit} />}
           {active === "students" && <Students institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
           {active === "attendance" && <Attendance institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
           {active === "fees" && <FeeCollection institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
@@ -310,7 +337,7 @@ export default function App() {
               branches={!activeBranch ? branches : null}
               homeInstitutionId={institution?.id}
               onBranchCreated={() => setBranchesTick((t) => t + 1)}
-              onSwitchBranch={setActiveBranchId}
+              onSwitchBranch={switchBranch}
             />
           )}
         </main>
