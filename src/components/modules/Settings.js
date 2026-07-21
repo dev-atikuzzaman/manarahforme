@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { supabase } from "../../lib/supabase";
 
-export default function Settings({ profile, institution, canEdit, onInstitutionUpdate, onToast, onLogout }) {
+export default function Settings({ profile, institution, canEdit, onInstitutionUpdate, onToast, onLogout, branches, homeInstitutionId, onBranchCreated, onSwitchBranch }) {
   const [tab, setTab] = useState("institution");
 
   return (
     <div className="space-y-6">
       <div className="flex gap-2 flex-wrap">
         <button onClick={() => setTab("institution")} className={`px-4 py-2 rounded-xl text-sm ${tab === "institution" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>প্রতিষ্ঠান</button>
+        {branches !== null && profile.role === "super_admin" && (
+          <button onClick={() => setTab("branches")} className={`px-4 py-2 rounded-xl text-sm ${tab === "branches" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>শাখা</button>
+        )}
         <button onClick={() => setTab("profile")} className={`px-4 py-2 rounded-xl text-sm ${tab === "profile" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>আমার প্রোফাইল</button>
         {profile.role === "super_admin" && (
           <button onClick={() => setTab("danger")} className={`px-4 py-2 rounded-xl text-sm ${tab === "danger" ? "bg-red-500/15 text-red-300 border border-red-500/30" : "text-cream/50 border border-white/10"}`}>বিপজ্জনক এলাকা</button>
@@ -17,10 +20,67 @@ export default function Settings({ profile, institution, canEdit, onInstitutionU
       {tab === "institution" && (
         <InstitutionTab institution={institution} canEdit={canEdit} onInstitutionUpdate={onInstitutionUpdate} onToast={onToast} />
       )}
+      {tab === "branches" && branches !== null && (
+        <BranchesTab branches={branches} homeInstitutionId={homeInstitutionId} onBranchCreated={onBranchCreated} onSwitchBranch={onSwitchBranch} onToast={onToast} />
+      )}
       {tab === "profile" && <ProfileTab profile={profile} onToast={onToast} />}
       {tab === "danger" && profile.role === "super_admin" && (
         <DangerTab institution={institution} onToast={onToast} onLogout={onLogout} />
       )}
+    </div>
+  );
+}
+
+function BranchesTab({ branches, homeInstitutionId, onBranchCreated, onSwitchBranch, onToast }) {
+  const [name, setName] = useState("");
+  const [creating, setCreating] = useState(false);
+
+  async function handleCreate(e) {
+    e.preventDefault();
+    setCreating(true);
+    const code = Math.random().toString(36).slice(2, 8).toUpperCase();
+    const { error } = await supabase.from("institutions").insert({
+      name,
+      invite_code: code,
+      parent_institution_id: homeInstitutionId,
+    });
+    setCreating(false);
+    if (error) return onToast({ type: "error", message: error.message });
+    onToast({ message: `শাখা "${name}" তৈরি হয়েছে` });
+    setName("");
+    onBranchCreated?.();
+  }
+
+  return (
+    <div className="space-y-5 max-w-xl">
+      <p className="text-xs text-cream/45 leading-relaxed">
+        প্রতিটা শাখার নিজস্ব শিক্ষার্থী, উপস্থিতি, হিসাব, স্টাফ থাকবে — সম্পূর্ণ আলাদা, কিন্তু আপনি (সুপার এডমিন) এখান থেকেই যেকোনো শাখায় ঢুকে দেখতে/পরিচালনা করতে পারবেন।
+      </p>
+
+      <form onSubmit={handleCreate} className="glass-card rounded-2xl p-6 flex gap-3 items-end flex-wrap">
+        <div className="flex-1 min-w-[200px]">
+          <div className="text-sm text-cream/60 mb-2">নতুন শাখা যোগ করুন</div>
+          <input required placeholder="শাখার নাম (যেমন: উত্তর শাখা)" className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={name} onChange={(e) => setName(e.target.value)} />
+        </div>
+        <button disabled={creating} className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold px-4 py-2 rounded-xl text-sm disabled:opacity-50">
+          {creating ? "..." : "তৈরি করুন"}
+        </button>
+      </form>
+
+      <div className="glass-card rounded-2xl overflow-hidden">
+        {branches.length === 0 && <div className="px-5 py-6 text-center text-cream/40 text-sm">এখনো কোনো শাখা যোগ করা হয়নি।</div>}
+        {branches.map((b) => (
+          <div key={b.id} className="px-5 py-4 border-b border-gold-500/5 flex items-center justify-between">
+            <div>
+              <div className="text-sm text-cream/90">{b.name}</div>
+              <div className="text-xs text-cream/40">কোড: {b.invite_code}</div>
+            </div>
+            <button onClick={() => onSwitchBranch(b.id)} className="text-xs bg-gold-500/15 border border-gold-500/30 text-gold-300 px-3 py-1.5 rounded-lg hover:bg-gold-500/25">
+              শাখায় প্রবেশ করুন →
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
