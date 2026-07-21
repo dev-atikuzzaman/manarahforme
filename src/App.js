@@ -8,6 +8,7 @@ import Overview from "./components/modules/Overview";
 import Students from "./components/modules/Students";
 import Attendance from "./components/modules/Attendance";
 import FeeCollection from "./components/modules/FeeCollection";
+import HifzProgress from "./components/modules/HifzProgress";
 import Donations from "./components/modules/Donations";
 import Accounting from "./components/modules/Accounting";
 import Qurbani from "./components/modules/Qurbani";
@@ -33,6 +34,9 @@ export default function App() {
   const [profile, setProfile] = useState(null);
   const [profileChecked, setProfileChecked] = useState(false);
   const [institution, setInstitution] = useState(null);
+  const [branches, setBranches] = useState([]);
+  const [branchesTick, setBranchesTick] = useState(0);
+  const [activeBranchId, setActiveBranchId] = useState(null);
   const [isPlatformAdmin, setIsPlatformAdmin] = useState(false);
   const [ownerMode, setOwnerMode] = useState(false);
   const [guardianLinkCount, setGuardianLinkCount] = useState(null);
@@ -86,6 +90,14 @@ export default function App() {
     })();
   }, [session, refreshTick]);
 
+  useEffect(() => {
+    if (!institution?.id || profile?.role !== "super_admin") { setBranches([]); return; }
+    (async () => {
+      const { data } = await supabase.from("institutions").select("*").eq("parent_institution_id", institution.id).order("created_at");
+      setBranches(data || []);
+    })();
+  }, [institution?.id, profile?.role, branchesTick]);
+
   // signUp() নিজেই একটা সেশন তৈরি করে ফেলে, যার ফলে global auth listener সাথে সাথে ফায়ার হয় —
   // কিন্তু ততক্ষণে Login/OwnerAuth/GuardianAuth হয়তো এখনো institution/profile/owner তৈরি করছে।
   // pendingSetup সত্যি থাকা অবস্থায় App.js এই "মাঝপথের" সেশন দেখে আগেভাগে ড্যাশবোর্ড/গার্ডিয়ান
@@ -111,6 +123,7 @@ export default function App() {
     setForceGuardianView(false);
     setPendingSetup(false);
     setPasswordRecovery(false);
+    setActiveBranchId(null);
   }
 
   if (!supabase) {
@@ -245,19 +258,25 @@ export default function App() {
   }
 
   const canEdit = profile.role === "super_admin" || profile.role === "branch_admin";
+  const activeBranch = branches.find((b) => b.id === activeBranchId) || null;
+  const viewInstitution = activeBranch || institution;
 
   return (
     <div className="min-h-screen bg-ink-950 bg-radial-fade flex">
       <Sidebar
         active={active}
         onChange={setActive}
-        institutionName={institution?.name || ""}
+        institutionName={viewInstitution?.name || ""}
         role={profile.role}
         onLogout={handleLogout}
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         isPlatformAdmin={isPlatformAdmin}
         onOwnerPanel={() => setOwnerMode(true)}
+        branches={branches}
+        activeBranchId={activeBranchId}
+        homeInstitutionName={institution?.name}
+        onSwitchBranch={setActiveBranchId}
       />
 
       <div className="flex-1 min-w-0">
@@ -265,28 +284,33 @@ export default function App() {
           <button onClick={() => setSidebarOpen(true)} className="text-gold-400 text-xl md:hidden">☰</button>
           <span className="font-display text-gold-400 md:hidden">মানারাহ</span>
           <span className="hidden md:block" />
-          <NotificationBell institutionId={profile.institution_id} profile={profile} />
+          <NotificationBell institutionId={viewInstitution?.id} profile={profile} />
         </div>
 
         <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-          {active === "overview" && <Overview institutionId={profile.institution_id} inviteCode={institution?.invite_code} onNavigate={setActive} canEdit={canEdit} />}
-          {active === "students" && <Students institutionId={profile.institution_id} canEdit={canEdit} onToast={showToast} />}
-          {active === "attendance" && <Attendance institutionId={profile.institution_id} canEdit={canEdit} onToast={showToast} />}
-          {active === "fees" && <FeeCollection institutionId={profile.institution_id} canEdit={canEdit} onToast={showToast} />}
-          {active === "donations" && <Donations institutionId={profile.institution_id} canEdit={canEdit} onToast={showToast} />}
-          {active === "qurbani" && <Qurbani institutionId={profile.institution_id} canEdit={canEdit} onToast={showToast} />}
-          {active === "accounting" && <Accounting institutionId={profile.institution_id} canEdit={canEdit} onToast={showToast} />}
-          {active === "notifications" && canEdit && <Notifications institutionId={profile.institution_id} profile={profile} onToast={showToast} />}
-          {active === "reports" && canEdit && <Reports institutionId={profile.institution_id} institutionName={institution?.name} />}
-          {active === "members" && canEdit && <MemberApprovals institutionId={profile.institution_id} onToast={showToast} />}
+          {active === "overview" && <Overview institutionId={viewInstitution?.id} inviteCode={viewInstitution?.invite_code} onNavigate={setActive} canEdit={canEdit} />}
+          {active === "students" && <Students institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
+          {active === "attendance" && <Attendance institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
+          {active === "fees" && <FeeCollection institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
+          {active === "hifz" && <HifzProgress institutionId={viewInstitution?.id} />}
+          {active === "donations" && <Donations institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
+          {active === "qurbani" && <Qurbani institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
+          {active === "accounting" && <Accounting institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
+          {active === "notifications" && canEdit && <Notifications institutionId={viewInstitution?.id} profile={profile} onToast={showToast} />}
+          {active === "reports" && canEdit && <Reports institutionId={viewInstitution?.id} institutionName={viewInstitution?.name} />}
+          {active === "members" && canEdit && <MemberApprovals institutionId={viewInstitution?.id} onToast={showToast} />}
           {active === "settings" && (
             <Settings
               profile={profile}
-              institution={institution}
+              institution={viewInstitution}
               canEdit={canEdit}
-              onInstitutionUpdate={setInstitution}
+              onInstitutionUpdate={activeBranch ? (updated) => setBranches((prev) => prev.map((b) => (b.id === updated.id ? updated : b))) : setInstitution}
               onToast={showToast}
               onLogout={handleLogout}
+              branches={!activeBranch ? branches : null}
+              homeInstitutionId={institution?.id}
+              onBranchCreated={() => setBranchesTick((t) => t + 1)}
+              onSwitchBranch={setActiveBranchId}
             />
           )}
         </main>
