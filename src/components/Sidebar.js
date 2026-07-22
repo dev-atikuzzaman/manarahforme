@@ -6,6 +6,7 @@ const NAV = [
   { key: "attendance", label: "উপস্থিতি ও হিফজ", icon: "✓" },
   { key: "fees", label: "ফি সংগ্রহ", icon: "৳" },
   { key: "hifz", label: "হিফজ প্রগ্রেস", icon: "📈" },
+  { key: "results", label: "রেজাল্ট/পরীক্ষা", icon: "🎓" },
   { key: "donations", label: "দান ও যাকাত", icon: "◆" },
   { key: "qurbani", label: "কুরবানি হিসাব", icon: "✦" },
   { key: "accounting", label: "একাউন্টিং", icon: "৳" },
