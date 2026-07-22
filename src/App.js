@@ -9,6 +9,7 @@ import Students from "./components/modules/Students";
 import Attendance from "./components/modules/Attendance";
 import FeeCollection from "./components/modules/FeeCollection";
 import HifzProgress from "./components/modules/HifzProgress";
+import Results from "./components/modules/Results";
 import Donations from "./components/modules/Donations";
 import Accounting from "./components/modules/Accounting";
 import Qurbani from "./components/modules/Qurbani";
@@ -320,6 +321,7 @@ export default function App() {
           {active === "attendance" && <Attendance institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
           {active === "fees" && <FeeCollection institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
           {active === "hifz" && <HifzProgress institutionId={viewInstitution?.id} />}
+          {active === "results" && <Results institutionId={viewInstitution?.id} institutionName={viewInstitution?.name} canEdit={canEdit} onToast={showToast} />}
           {active === "donations" && <Donations institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
           {active === "qurbani" && <Qurbani institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
           {active === "accounting" && <Accounting institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
