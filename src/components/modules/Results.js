@@ -1,16 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { exportExcel, exportPDF } from "../../lib/exportUtils";
-
-function gradeOf(percentage) {
-  if (percentage >= 80) return { grade: "A+", gpa: 5.0 };
-  if (percentage >= 70) return { grade: "A", gpa: 4.0 };
-  if (percentage >= 60) return { grade: "A-", gpa: 3.5 };
-  if (percentage >= 50) return { grade: "B", gpa: 3.0 };
-  if (percentage >= 40) return { grade: "C", gpa: 2.0 };
-  if (percentage >= 33) return { grade: "D", gpa: 1.0 };
-  return { grade: "F", gpa: 0.0 };
-}
+import { gradeOf } from "../../lib/grading";
 
 export default function Results({ institutionId, institutionName, canEdit, onToast }) {
   const [exams, setExams] = useState([]);
