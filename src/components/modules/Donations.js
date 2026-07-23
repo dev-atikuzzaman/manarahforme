@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { exportReceipt } from "../../lib/exportUtils";
 
 const NISAB_GRAMS_SILVER = 612.36; // শরীয়াহ মতে নিসাব সাধারণত রূপার হিসাবে ধরা হয় (দরিদ্রদের জন্য উপকারী)
 
-export default function Donations({ institutionId, canEdit, onToast }) {
+export default function Donations({ institutionId, institutionName, canEdit, onToast }) {
   const [tab, setTab] = useState("donations"); // donations | zakat
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,6 +55,24 @@ export default function Donations({ institutionId, canEdit, onToast }) {
 
   const total = rows.reduce((s, r) => s + Number(r.amount || 0), 0);
 
+  const [downloadingId, setDownloadingId] = useState(null);
+  async function downloadReceipt(r) {
+    setDownloadingId(r.id);
+    try {
+      await exportReceipt({
+        institutionName,
+        receiptNo: `MNR-${r.id.slice(0, 8).toUpperCase()}`,
+        donorName: r.donor_name,
+        amount: r.amount,
+        purpose: r.purpose,
+        note: r.note,
+        date: new Date(r.created_at).toLocaleDateString("bn-BD"),
+      });
+    } finally {
+      setDownloadingId(null);
+    }
+  }
+
   const nisabValue = silverPrice ? NISAB_GRAMS_SILVER * Number(silverPrice) : 0;
   const totalAssets = [cash, goldValue, businessAssets, receivables].reduce((s, v) => s + (Number(v) || 0), 0) - (Number(liabilities) || 0);
   const isEligible = nisabValue > 0 && totalAssets >= nisabValue;
@@ -98,17 +117,23 @@ export default function Donations({ institutionId, canEdit, onToast }) {
                     <th className="px-4 py-3 font-medium">খাত</th>
                     <th className="px-4 py-3 font-medium">পরিমাণ</th>
                     <th className="px-4 py-3 font-medium">মন্তব্য</th>
+                    <th className="px-4 py-3"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {loading && <tr><td colSpan={4} className="px-4 py-6 text-center text-cream/40">লোড হচ্ছে...</td></tr>}
-                  {!loading && rows.length === 0 && <tr><td colSpan={4} className="px-4 py-6 text-center text-cream/40">এখনও কোনো দান রেকর্ড হয়নি।</td></tr>}
+                  {loading && <tr><td colSpan={5} className="px-4 py-6 text-center text-cream/40">লোড হচ্ছে...</td></tr>}
+                  {!loading && rows.length === 0 && <tr><td colSpan={5} className="px-4 py-6 text-center text-cream/40">এখনও কোনো দান রেকর্ড হয়নি।</td></tr>}
                   {rows.map((r) => (
                     <tr key={r.id} className="border-b border-gold-500/5 hover:bg-white/5">
                       <td className="px-4 py-3">{r.donor_name}</td>
                       <td className="px-4 py-3 text-cream/60">{r.purpose}</td>
                       <td className="px-4 py-3 text-gold-300">৳{Number(r.amount).toLocaleString("bn-BD")}</td>
                       <td className="px-4 py-3 text-cream/50">{r.note}</td>
+                      <td className="px-4 py-3 text-right">
+                        <button onClick={() => downloadReceipt(r)} disabled={downloadingId === r.id} className="text-xs text-gold-400 hover:text-gold-300 disabled:opacity-50">
+                          {downloadingId === r.id ? "..." : "রশিদ PDF"}
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
