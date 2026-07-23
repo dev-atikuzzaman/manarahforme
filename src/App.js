@@ -322,7 +322,7 @@ export default function App() {
           {active === "fees" && <FeeCollection institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
           {active === "hifz" && <HifzProgress institutionId={viewInstitution?.id} />}
           {active === "results" && <Results institutionId={viewInstitution?.id} institutionName={viewInstitution?.name} canEdit={canEdit} onToast={showToast} />}
-          {active === "donations" && <Donations institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
+          {active === "donations" && <Donations institutionId={viewInstitution?.id} institutionName={viewInstitution?.name} canEdit={canEdit} onToast={showToast} />}
           {active === "qurbani" && <Qurbani institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
           {active === "accounting" && <Accounting institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
           {active === "notifications" && canEdit && <Notifications institutionId={viewInstitution?.id} profile={profile} onToast={showToast} />}
