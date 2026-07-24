@@ -11,6 +11,7 @@ const TILES = [
   { key: "qurbani", label: "কুরবানি হিসাব", icon: "✦", desc: "ভাগ বণ্টন, মাংস বিতরণ" },
   { key: "accounting", label: "একাউন্টিং", icon: "৳", desc: "আয়-ব্যয়, মাসিক ট্রেন্ড" },
   { key: "payroll", label: "স্টাফ বেতন", icon: "👤", desc: "স্টাফ তালিকা, বেতন প্রদান" },
+  { key: "hostel", label: "আবাসিক/হোস্টেল", icon: "🏠", desc: "রুম, মিল হিসাব, বোর্ডিং ফি" },
   { key: "notifications", label: "নোটিফিকেশন", icon: "🔔", desc: "ব্রডকাস্ট, SMS", adminOnly: true },
   { key: "reports", label: "রিপোর্ট ও এক্সপোর্ট", icon: "⬇", desc: "PDF/Excel ডাউনলোড", adminOnly: true },
   { key: "members", label: "সদস্য অনুমোদন", icon: "⚑", desc: "স্টাফ যোগদান অনুমোদন", adminOnly: true },
