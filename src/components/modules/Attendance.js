@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+
+const QRScanner = lazy(() => import("../QRScanner"));
 
 export default function Attendance({ institutionId, canEdit, onToast }) {
   const [students, setStudents] = useState([]);
   const [records, setRecords] = useState({});
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [loading, setLoading] = useState(true);
+  const [scannerOpen, setScannerOpen] = useState(false);
 
   async function load() {
     setLoading(true);
-    const { data: st } = await supabase.from("students").select("id, name, class_name").eq("institution_id", institutionId).order("name");
+    const { data: st } = await supabase.from("students").select("id, name, class_name, attendance_code").eq("institution_id", institutionId).order("name");
     setStudents(st || []);
     const { data: att } = await supabase.from("attendance").select("*").eq("institution_id", institutionId).eq("date", date);
     const map = {};
@@ -61,14 +64,37 @@ export default function Attendance({ institutionId, canEdit, onToast }) {
 
   const presentCount = Object.values(records).filter((r) => r.status === "present").length;
 
+  function handleScan(code) {
+    const student = students.find((s) => s.attendance_code === code.trim().toUpperCase() || s.attendance_code === code.trim());
+    if (!student) {
+      onToast({ type: "error", message: "এই কোডের কোনো শিক্ষার্থী পাওয়া যায়নি।" });
+      return;
+    }
+    mark(student.id, "present");
+    onToast({ message: `${student.name} — উপস্থিত হিসেবে চিহ্নিত হয়েছে` });
+  }
+
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-4 justify-between">
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" />
+        <div className="flex items-center gap-3">
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" />
+          {canEdit && (
+            <button onClick={() => setScannerOpen(true)} className="bg-gold-500/15 border border-gold-500/30 text-gold-300 hover:bg-gold-500/25 px-3 py-2 rounded-xl text-sm">
+              📷 QR দিয়ে হাজিরা নিন
+            </button>
+          )}
+        </div>
         <div className="text-sm text-cream/50">
           আজ উপস্থিত: <span className="text-gold-400 font-semibold">{presentCount}</span> / {students.length}
         </div>
       </div>
+
+      {scannerOpen && (
+        <Suspense fallback={<div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center text-cream/50 text-sm">লোড হচ্ছে...</div>}>
+          <QRScanner onScan={handleScan} onClose={() => setScannerOpen(false)} />
+        </Suspense>
+      )}
 
       <div className="glass-card rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">

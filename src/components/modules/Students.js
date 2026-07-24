@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+
+const QRCodeModal = lazy(() => import("../QRCodeModal"));
 
 const EMPTY = { name: "", guardian_name: "", phone: "", class_name: "", monthly_fee: "" };
 
@@ -9,6 +11,7 @@ export default function Students({ institutionId, canEdit, onToast }) {
   const [form, setForm] = useState(EMPTY);
   const [editingId, setEditingId] = useState(null);
   const [query, setQuery] = useState("");
+  const [qrStudent, setQrStudent] = useState(null);
 
   async function load() {
     setLoading(true);
@@ -89,12 +92,13 @@ export default function Students({ institutionId, canEdit, onToast }) {
                 <th className="px-4 py-3 font-medium">ক্লাস</th>
                 <th className="px-4 py-3 font-medium">ফি</th>
                 <th className="px-4 py-3 font-medium">পোর্টাল কোড</th>
+                <th className="px-4 py-3 font-medium">QR</th>
                 {canEdit && <th className="px-4 py-3"></th>}
               </tr>
             </thead>
             <tbody>
-              {loading && <tr><td colSpan={7} className="px-4 py-6 text-center text-cream/40">লোড হচ্ছে...</td></tr>}
-              {!loading && filtered.length === 0 && <tr><td colSpan={7} className="px-4 py-6 text-center text-cream/40">কোনো তথ্য নেই — উপরের ফর্ম দিয়ে যোগ করুন।</td></tr>}
+              {loading && <tr><td colSpan={8} className="px-4 py-6 text-center text-cream/40">লোড হচ্ছে...</td></tr>}
+              {!loading && filtered.length === 0 && <tr><td colSpan={8} className="px-4 py-6 text-center text-cream/40">কোনো তথ্য নেই — উপরের ফর্ম দিয়ে যোগ করুন।</td></tr>}
               {filtered.map((r) => (
                 <tr key={r.id} className="border-b border-gold-500/5 hover:bg-white/5">
                   <td className="px-4 py-3">{r.name}</td>
@@ -109,6 +113,9 @@ export default function Students({ institutionId, canEdit, onToast }) {
                       </button>
                     )}
                   </td>
+                  <td className="px-4 py-3">
+                    <button onClick={() => setQrStudent(r)} className="text-xs text-gold-400 hover:text-gold-300 border border-gold-500/20 rounded-lg px-2 py-1">দেখুন</button>
+                  </td>
                   {canEdit && (
                     <td className="px-4 py-3 text-right whitespace-nowrap">
                       <button onClick={() => { setForm(r); setEditingId(r.id); }} className="text-gold-400 hover:text-gold-300 text-xs mr-3">এডিট</button>
@@ -121,6 +128,11 @@ export default function Students({ institutionId, canEdit, onToast }) {
           </table>
         </div>
       </div>
+      {qrStudent && (
+        <Suspense fallback={null}>
+          <QRCodeModal student={qrStudent} onClose={() => setQrStudent(null)} />
+        </Suspense>
+      )}
     </div>
   );
 }
