@@ -11,6 +11,7 @@ const NAV = [
   { key: "qurbani", label: "কুরবানি হিসাব", icon: "✦" },
   { key: "accounting", label: "একাউন্টিং", icon: "৳" },
   { key: "payroll", label: "স্টাফ বেতন", icon: "👤" },
+  { key: "hostel", label: "আবাসিক/হোস্টেল", icon: "🏠" },
   { key: "notifications", label: "নোটিফিকেশন", icon: "🔔" },
   { key: "reports", label: "রিপোর্ট ও এক্সপোর্ট", icon: "⬇" },
   { key: "members", label: "সদস্য অনুমোদন", icon: "⚑" },
