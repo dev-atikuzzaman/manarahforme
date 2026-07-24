@@ -13,6 +13,7 @@ import Results from "./components/modules/Results";
 import Donations from "./components/modules/Donations";
 import Accounting from "./components/modules/Accounting";
 import Payroll from "./components/modules/Payroll";
+import Hostel from "./components/modules/Hostel";
 import Qurbani from "./components/modules/Qurbani";
 import MemberApprovals from "./components/modules/MemberApprovals";
 import Notifications from "./components/modules/Notifications";
@@ -327,6 +328,7 @@ export default function App() {
           {active === "qurbani" && <Qurbani institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
           {active === "accounting" && <Accounting institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
           {active === "payroll" && <Payroll institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
+          {active === "hostel" && <Hostel institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
           {active === "notifications" && canEdit && <Notifications institutionId={viewInstitution?.id} profile={profile} onToast={showToast} />}
           {active === "reports" && canEdit && <Reports institutionId={viewInstitution?.id} institutionName={viewInstitution?.name} />}
           {active === "members" && canEdit && <MemberApprovals institutionId={viewInstitution?.id} onToast={showToast} />}
