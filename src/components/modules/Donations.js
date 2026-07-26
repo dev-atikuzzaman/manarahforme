@@ -41,8 +41,31 @@ export default function Donations({ institutionId, institutionName, canEdit, onT
 
   async function handleSubmit(e) {
     e.preventDefault();
+    const donorName = form.donor_name.trim();
+
+    // দাতার নাম মিলিয়ে বিদ্যমান donor রেকর্ড খুঁজে বের করা, না পেলে নতুন তৈরি —
+    // ফর্মের ইউআই একই থাকছে, ব্যাকগ্রাউন্ডেই CRM ডাটা তৈরি হচ্ছে।
+    let donorId = null;
+    const { data: existingDonor } = await supabase
+      .from("donors")
+      .select("id")
+      .eq("institution_id", institutionId)
+      .ilike("name", donorName)
+      .maybeSingle();
+    if (existingDonor) {
+      donorId = existingDonor.id;
+    } else {
+      const { data: newDonor, error: donorErr } = await supabase
+        .from("donors")
+        .insert({ institution_id: institutionId, name: donorName })
+        .select()
+        .single();
+      if (!donorErr) donorId = newDonor?.id;
+    }
+
     const { error } = await supabase.from("donations").insert({
       institution_id: institutionId,
+      donor_id: donorId,
       donor_name: form.donor_name,
       amount: Number(form.amount),
       purpose: form.purpose,
