@@ -11,6 +11,7 @@ import FeeCollection from "./components/modules/FeeCollection";
 import HifzProgress from "./components/modules/HifzProgress";
 import Results from "./components/modules/Results";
 import Donations from "./components/modules/Donations";
+import Donors from "./components/modules/Donors";
 import Accounting from "./components/modules/Accounting";
 import Payroll from "./components/modules/Payroll";
 import Hostel from "./components/modules/Hostel";
@@ -325,6 +326,7 @@ export default function App() {
           {active === "hifz" && <HifzProgress institutionId={viewInstitution?.id} />}
           {active === "results" && <Results institutionId={viewInstitution?.id} institutionName={viewInstitution?.name} canEdit={canEdit} onToast={showToast} />}
           {active === "donations" && <Donations institutionId={viewInstitution?.id} institutionName={viewInstitution?.name} canEdit={canEdit} onToast={showToast} />}
+          {active === "donors" && <Donors institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
           {active === "qurbani" && <Qurbani institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
           {active === "accounting" && <Accounting institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
           {active === "payroll" && <Payroll institutionId={viewInstitution?.id} canEdit={canEdit} onToast={showToast} />}
