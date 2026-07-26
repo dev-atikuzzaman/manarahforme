@@ -8,6 +8,7 @@ const TILES = [
   { key: "hifz", label: "হিফজ প্রগ্রেস", icon: "📈", desc: "অগ্রগতির চার্ট, লিডারবোর্ড" },
   { key: "results", label: "রেজাল্ট/পরীক্ষা", icon: "🎓", desc: "নম্বর, গ্রেড, মেধাক্রম, রেজাল্ট কার্ড" },
   { key: "donations", label: "দান ও যাকাত", icon: "◆", desc: "দান রেকর্ড, নিসাব হিসাব" },
+  { key: "donors", label: "ডোনার CRM", icon: "🤝", desc: "দাতার ইতিহাস, ফলো-আপ, প্রবণতা" },
   { key: "qurbani", label: "কুরবানি হিসাব", icon: "✦", desc: "ভাগ বণ্টন, মাংস বিতরণ" },
   { key: "accounting", label: "একাউন্টিং", icon: "৳", desc: "আয়-ব্যয়, মাসিক ট্রেন্ড" },
   { key: "payroll", label: "স্টাফ বেতন", icon: "👤", desc: "স্টাফ তালিকা, বেতন প্রদান" },
