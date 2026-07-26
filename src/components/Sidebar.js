@@ -8,6 +8,7 @@ const NAV = [
   { key: "hifz", label: "হিফজ প্রগ্রেস", icon: "📈" },
   { key: "results", label: "রেজাল্ট/পরীক্ষা", icon: "🎓" },
   { key: "donations", label: "দান ও যাকাত", icon: "◆" },
+  { key: "donors", label: "ডোনার CRM", icon: "🤝" },
   { key: "qurbani", label: "কুরবানি হিসাব", icon: "✦" },
   { key: "accounting", label: "একাউন্টিং", icon: "৳" },
   { key: "payroll", label: "স্টাফ বেতন", icon: "👤" },
