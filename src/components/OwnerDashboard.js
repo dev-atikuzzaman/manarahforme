@@ -9,6 +9,7 @@ const STATUS_COLOR = {
 };
 
 export default function OwnerDashboard({ onSwitchToInstitution, hasOwnInstitution, onLogout }) {
+  const [ownerTab, setOwnerTab] = useState("institutions"); // institutions | payments
   const [institutions, setInstitutions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(null);
@@ -17,6 +18,58 @@ export default function OwnerDashboard({ onSwitchToInstitution, hasOwnInstitutio
   const [ownerEmail, setOwnerEmail] = useState("");
   const [addingOwner, setAddingOwner] = useState(false);
   const [ownerMsg, setOwnerMsg] = useState(null);
+  const [payments, setPayments] = useState([]);
+  const [paymentsLoading, setPaymentsLoading] = useState(true);
+  const [myUserId, setMyUserId] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setMyUserId(data?.user?.id || null));
+  }, []);
+
+  async function loadPayments() {
+    setPaymentsLoading(true);
+    const { data } = await supabase
+      .from("platform_payments")
+      .select("*, institutions(name)")
+      .order("created_at", { ascending: false });
+    setPayments(data || []);
+    setPaymentsLoading(false);
+  }
+
+  useEffect(() => {
+    loadPayments();
+    const channel = supabase
+      .channel("owner-payments-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "platform_payments" }, loadPayments)
+      .subscribe();
+    return () => supabase.removeChannel(channel);
+  }, []);
+
+  const pendingCount = payments.filter((p) => p.status === "pending").length;
+
+  async function verifyPayment(p) {
+    const { error: payErr } = await supabase.from("platform_payments").update({
+      status: "verified",
+      verified_by: myUserId,
+      verified_at: new Date().toISOString(),
+    }).eq("id", p.id);
+    if (payErr) return alert(payErr.message);
+
+    const inst = institutions.find((i) => i.id === p.institution_id);
+    const base = inst?.trial_ends_at && new Date(inst.trial_ends_at) > new Date() ? new Date(inst.trial_ends_at) : new Date();
+    base.setDate(base.getDate() + Number(p.months_covered) * 30);
+    const { error: instErr } = await supabase.from("institutions").update({
+      plan_status: "active",
+      trial_ends_at: base.toISOString(),
+    }).eq("id", p.institution_id);
+    if (instErr) return alert(instErr.message);
+  }
+
+  async function rejectPayment(p) {
+    const note = prompt("প্রত্যাখ্যানের কারণ (ঐচ্ছিক):") || "";
+    const { error } = await supabase.from("platform_payments").update({ status: "rejected", note, verified_by: myUserId, verified_at: new Date().toISOString() }).eq("id", p.id);
+    if (error) alert(error.message);
+  }
 
   async function load() {
     setLoading(true);
@@ -120,6 +173,20 @@ export default function OwnerDashboard({ onSwitchToInstitution, hasOwnInstitutio
           <div className="glass-card rounded-2xl p-5"><div className="text-cream/40 text-xs mb-1">স্থগিত</div><div className="text-2xl font-display text-red-400">{summary.suspended}</div></div>
         </div>
 
+        <div className="flex gap-2 mb-6">
+          <button onClick={() => setOwnerTab("institutions")} className={`px-4 py-2 rounded-xl text-sm ${ownerTab === "institutions" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>প্রতিষ্ঠান</button>
+          <button onClick={() => setOwnerTab("payments")} className={`px-4 py-2 rounded-xl text-sm relative ${ownerTab === "payments" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>
+            পেমেন্ট ভেরিফিকেশন
+            {pendingCount > 0 && <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">{pendingCount}</span>}
+          </button>
+        </div>
+
+        {ownerTab === "payments" && (
+          <PaymentsPanel payments={payments} loading={paymentsLoading} onVerify={verifyPayment} onReject={rejectPayment} />
+        )}
+
+        {ownerTab === "institutions" && (
+        <>
         <form onSubmit={handleAddOwner} className="glass-card rounded-2xl p-5 mb-6 flex flex-wrap gap-3 items-start">
           <div className="flex-1 min-w-[200px]">
             <div className="text-sm text-cream/60 mb-2">আরেকজনকে প্ল্যাটফর্ম ওনার বানান</div>
@@ -197,6 +264,55 @@ export default function OwnerDashboard({ onSwitchToInstitution, hasOwnInstitutio
             );
           })}
         </div>
+        </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const METHOD_LABEL = { bkash: "বিকাশ", nagad: "নগদ", rocket: "রকেট", upay: "উপায়", bank: "ব্যাংক", other: "অন্যান্য" };
+
+function PaymentsPanel({ payments, loading, onVerify, onReject }) {
+  const [filter, setFilter] = useState("pending");
+  const filtered = payments.filter((p) => filter === "all" || p.status === filter);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-2">
+        {["pending", "verified", "rejected", "all"].map((f) => (
+          <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1.5 rounded-lg text-xs ${filter === f ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>
+            {f === "pending" ? "অপেক্ষমাণ" : f === "verified" ? "যাচাইকৃত" : f === "rejected" ? "প্রত্যাখ্যাত" : "সব"}
+          </button>
+        ))}
+      </div>
+
+      {loading && <div className="text-center text-cream/40 py-10">লোড হচ্ছে...</div>}
+      {!loading && filtered.length === 0 && <div className="glass-card rounded-2xl p-8 text-center text-cream/40">কোনো পেমেন্ট নেই।</div>}
+
+      <div className="space-y-3">
+        {filtered.map((p) => (
+          <div key={p.id} className="glass-card rounded-2xl p-5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div className="text-sm text-cream/90 font-medium">{p.institutions?.name || "অজানা প্রতিষ্ঠান"}</div>
+              <div className="text-xs text-cream/50 mt-1">
+                {METHOD_LABEL[p.method]} · ৳{Number(p.amount).toLocaleString("bn-BD")} · {p.months_covered} মাস · প্রেরক: {p.sender_number}
+              </div>
+              <div className="text-xs text-cream/40">TrxID: {p.transaction_id} · {new Date(p.created_at).toLocaleString("bn-BD")}</div>
+              {p.note && <div className="text-xs text-red-300/70 mt-1">{p.note}</div>}
+            </div>
+            {p.status === "pending" ? (
+              <div className="flex gap-2 shrink-0">
+                <button onClick={() => onVerify(p)} className="text-xs bg-emerald-600/20 border border-emerald-500/30 text-emerald-300 px-3 py-1.5 rounded-lg hover:bg-emerald-600/30">যাচাই করুন</button>
+                <button onClick={() => onReject(p)} className="text-xs bg-red-500/15 border border-red-500/30 text-red-300 px-3 py-1.5 rounded-lg hover:bg-red-500/25">প্রত্যাখ্যান</button>
+              </div>
+            ) : (
+              <span className={`text-xs px-2.5 py-1 rounded-full shrink-0 ${p.status === "verified" ? "bg-emerald-500/15 text-emerald-300" : "bg-red-500/15 text-red-300"}`}>
+                {p.status === "verified" ? "যাচাইকৃত" : "প্রত্যাখ্যাত"}
+              </span>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
