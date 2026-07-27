@@ -20,6 +20,7 @@ import MemberApprovals from "./components/modules/MemberApprovals";
 import Notifications from "./components/modules/Notifications";
 import Reports from "./components/modules/Reports";
 import Settings from "./components/modules/Settings";
+import SubscriptionPayment from "./components/modules/SubscriptionPayment";
 import NotificationBell from "./components/NotificationBell";
 import GuardianAuth from "./components/GuardianAuth";
 import GuardianPortal from "./components/GuardianPortal";
@@ -334,6 +335,9 @@ export default function App() {
           {active === "notifications" && canEdit && <Notifications institutionId={viewInstitution?.id} profile={profile} onToast={showToast} />}
           {active === "reports" && canEdit && <Reports institutionId={viewInstitution?.id} institutionName={viewInstitution?.name} />}
           {active === "members" && canEdit && <MemberApprovals institutionId={viewInstitution?.id} onToast={showToast} />}
+          {active === "subscription" && institution && (
+            <SubscriptionPayment institution={institution} profile={profile} onToast={showToast} />
+          )}
           {active === "settings" && (
             <Settings
               profile={profile}
