@@ -8,7 +8,7 @@ export default function Donations({ institutionId, institutionName, canEdit, onT
   const [tab, setTab] = useState("donations"); // donations | zakat
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState({ donor_name: "", amount: "", purpose: "সাধারণ দান", note: "" });
+  const [form, setForm] = useState({ donor_name: "", amount: "", purpose: "সাধারণ দান", note: "", payment_method: "cash", transaction_id: "" });
 
   // যাকাত ক্যালকুলেটর স্টেট
   const [silverPrice, setSilverPrice] = useState("");
@@ -70,10 +70,12 @@ export default function Donations({ institutionId, institutionName, canEdit, onT
       amount: Number(form.amount),
       purpose: form.purpose,
       note: form.note,
+      payment_method: form.payment_method,
+      transaction_id: form.transaction_id || null,
     });
     if (error) return onToast({ type: "error", message: error.message });
     onToast({ message: "দান রেকর্ড করা হয়েছে" });
-    setForm({ donor_name: "", amount: "", purpose: "সাধারণ দান", note: "" });
+    setForm({ donor_name: "", amount: "", purpose: "সাধারণ দান", note: "", payment_method: "cash", transaction_id: "" });
   }
 
   const total = rows.reduce((s, r) => s + Number(r.amount || 0), 0);
@@ -127,6 +129,18 @@ export default function Donations({ institutionId, institutionName, canEdit, onT
                 <option>নির্মাণ কাজ</option>
               </select>
               <input placeholder="মন্তব্য (ঐচ্ছিক)" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} />
+              <select className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={form.payment_method} onChange={(e) => setForm({ ...form, payment_method: e.target.value })}>
+                <option value="cash">নগদ</option>
+                <option value="bkash">বিকাশ</option>
+                <option value="nagad">নগদ (MFS)</option>
+                <option value="rocket">রকেট</option>
+                <option value="upay">উপায়</option>
+                <option value="bank">ব্যাংক</option>
+                <option value="other">অন্যান্য</option>
+              </select>
+              {form.payment_method !== "cash" && (
+                <input placeholder="ট্রানজেকশন আইডি (ঐচ্ছিক)" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={form.transaction_id} onChange={(e) => setForm({ ...form, transaction_id: e.target.value })} />
+              )}
               <button className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold px-4 rounded-xl text-sm">রেকর্ড করুন</button>
             </form>
           )}
