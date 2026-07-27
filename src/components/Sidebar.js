@@ -16,6 +16,7 @@ const NAV = [
   { key: "notifications", label: "নোটিফিকেশন", icon: "🔔" },
   { key: "reports", label: "রিপোর্ট ও এক্সপোর্ট", icon: "⬇" },
   { key: "members", label: "সদস্য অনুমোদন", icon: "⚑" },
+  { key: "subscription", label: "সাবস্ক্রিপশন", icon: "💳" },
   { key: "settings", label: "সেটিংস", icon: "⚙" },
 ];
 
@@ -57,6 +58,7 @@ export default function Sidebar({
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
           {NAV.map((n) => {
             if ((n.key === "members" || n.key === "notifications" || n.key === "reports") && role === "viewer") return null;
+            if (n.key === "subscription" && role !== "super_admin") return null;
             return (
               <button
                 key={n.key}
