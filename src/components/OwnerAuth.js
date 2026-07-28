@@ -87,7 +87,7 @@ export default function OwnerAuth({ onLoggedIn, onSetupChange, onBack }) {
 
       <div className="relative z-10 w-full max-w-md rounded-3xl p-8 anim-in bg-gradient-to-b from-white/[0.06] to-white/[0.02] border border-violet-400/25 backdrop-blur">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-violet-300 bg-violet-500/15 border border-violet-400/30 rounded-full px-3 py-1 mb-3">
+          <div className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider text-violet-300 bg-violet-500/15 border border-violet-400/30 rounded-full px-3 py-1 mb-3">
             🔒 সীমিত অ্যাক্সেস
           </div>
           <div className="text-2xl font-display text-violet-200">মানারাহ প্ল্যাটফর্ম</div>
@@ -113,7 +113,7 @@ export default function OwnerAuth({ onLoggedIn, onSetupChange, onBack }) {
 
         {mode === "signup" && (
           <form onSubmit={handleSignup} className="space-y-3">
-            <p className="text-[11px] text-cream/35">এই সাইন-আপ শুধু তখনই কাজ করবে যদি এখনো কোনো মালিক নির্ধারিত না হয়ে থাকে — একবার কেউ মালিক হয়ে গেলে এটা আর কারো জন্য কাজ করবে না।</p>
+            <p className="text-xs text-cream/35">এই সাইন-আপ শুধু তখনই কাজ করবে যদি এখনো কোনো মালিক নির্ধারিত না হয়ে থাকে — একবার কেউ মালিক হয়ে গেলে এটা আর কারো জন্য কাজ করবে না।</p>
             <input className="w-full bg-black/30 border border-violet-400/25 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="ইমেইল" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             <input className="w-full bg-black/30 border border-violet-400/25 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="পাসওয়ার্ড (৬+ ক্যারেক্টার)" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
             <button disabled={busy} className="w-full bg-violet-500 hover:bg-violet-400 text-white font-semibold rounded-xl py-2.5 transition disabled:opacity-50">
@@ -125,7 +125,7 @@ export default function OwnerAuth({ onLoggedIn, onSetupChange, onBack }) {
 
         {mode === "forgot" && (
           <form onSubmit={handleForgot} className="space-y-3">
-            <p className="text-[11px] text-cream/35">ইমেইল দাও, রিসেট লিংক পাঠানো হবে।</p>
+            <p className="text-xs text-cream/35">ইমেইল দাও, রিসেট লিংক পাঠানো হবে।</p>
             <input className="w-full bg-black/30 border border-violet-400/25 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="মালিকের ইমেইল" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             <button disabled={busy} className="w-full bg-violet-500 hover:bg-violet-400 text-white font-semibold rounded-xl py-2.5 transition disabled:opacity-50">
               {busy ? "..." : "রিসেট লিংক পাঠান"}

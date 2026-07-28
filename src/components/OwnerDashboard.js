@@ -177,7 +177,7 @@ export default function OwnerDashboard({ onSwitchToInstitution, hasOwnInstitutio
           <button onClick={() => setOwnerTab("institutions")} className={`px-4 py-2 rounded-xl text-sm ${ownerTab === "institutions" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>প্রতিষ্ঠান</button>
           <button onClick={() => setOwnerTab("payments")} className={`px-4 py-2 rounded-xl text-sm relative ${ownerTab === "payments" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>
             পেমেন্ট ভেরিফিকেশন
-            {pendingCount > 0 && <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">{pendingCount}</span>}
+            {pendingCount > 0 && <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{pendingCount}</span>}
           </button>
         </div>
 
@@ -233,7 +233,7 @@ export default function OwnerDashboard({ onSwitchToInstitution, hasOwnInstitutio
                     </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
-                    {trialExpired && <span className="text-[10px] px-2 py-1 rounded-full bg-red-500/15 text-red-300 border border-red-500/30">ট্রায়াল শেষ</span>}
+                    {trialExpired && <span className="text-xs px-2 py-1 rounded-full bg-red-500/15 text-red-300 border border-red-500/30">ট্রায়াল শেষ</span>}
                     <span className={`text-xs px-2.5 py-1 rounded-full border ${STATUS_COLOR[inst.plan_status || "trial"]}`}>
                       {STATUS_LABEL[inst.plan_status || "trial"]}
                     </span>
@@ -243,9 +243,9 @@ export default function OwnerDashboard({ onSwitchToInstitution, hasOwnInstitutio
                 {expanded === inst.id && (
                   <div className="px-5 pb-5 border-t border-gold-500/10 pt-4 space-y-4">
                     <div className="grid sm:grid-cols-3 gap-3">
-                      <div className="bg-ink-900/40 rounded-xl p-3"><div className="text-[11px] text-cream/40">শিক্ষার্থী/সদস্য</div><div className="text-gold-400 font-semibold">{details[inst.id]?.students ?? "..."}</div></div>
-                      <div className="bg-ink-900/40 rounded-xl p-3"><div className="text-[11px] text-cream/40">স্টাফ সদস্য</div><div className="text-gold-400 font-semibold">{details[inst.id]?.members ?? "..."}</div></div>
-                      <div className="bg-ink-900/40 rounded-xl p-3"><div className="text-[11px] text-cream/40">মোট দান</div><div className="text-gold-400 font-semibold">৳{(details[inst.id]?.donationsTotal ?? 0).toLocaleString("bn-BD")}</div></div>
+                      <div className="bg-ink-900/40 rounded-xl p-3"><div className="text-xs text-cream/40">শিক্ষার্থী/সদস্য</div><div className="text-gold-400 font-semibold">{details[inst.id]?.students ?? "..."}</div></div>
+                      <div className="bg-ink-900/40 rounded-xl p-3"><div className="text-xs text-cream/40">স্টাফ সদস্য</div><div className="text-gold-400 font-semibold">{details[inst.id]?.members ?? "..."}</div></div>
+                      <div className="bg-ink-900/40 rounded-xl p-3"><div className="text-xs text-cream/40">মোট দান</div><div className="text-gold-400 font-semibold">৳{(details[inst.id]?.donationsTotal ?? 0).toLocaleString("bn-BD")}</div></div>
                     </div>
 
                     {inst.trial_ends_at && (

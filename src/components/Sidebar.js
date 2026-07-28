@@ -37,7 +37,7 @@ export default function Sidebar({
         <div className="px-6 py-6 border-b border-gold-500/10">
           <div className="font-display text-xl text-gold-400">মানারাহ</div>
           <div className="text-xs text-cream/40 mt-0.5 truncate">{institutionName}</div>
-          {activeBranchId && <div className="text-[10px] text-gold-400/70 mt-1">শাখা দেখছেন</div>}
+          {activeBranchId && <div className="text-xs text-gold-400/70 mt-1">শাখা দেখছেন</div>}
         </div>
 
         {showBranchSwitcher && (
@@ -77,7 +77,7 @@ export default function Sidebar({
         </nav>
 
         <div className="p-3 border-t border-gold-500/10">
-          <div className="px-3 py-1.5 text-[11px] text-cream/35 uppercase tracking-wide">{role}</div>
+          <div className="px-3 py-1.5 text-xs text-cream/35 uppercase tracking-wide">{role}</div>
           {isPlatformAdmin && (
             <button onClick={onOwnerPanel} className="w-full text-left px-3 py-2.5 rounded-xl text-sm text-gold-400 hover:bg-white/5 transition">
               ✦ মালিক প্যানেল

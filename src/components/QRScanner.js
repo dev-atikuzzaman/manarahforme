@@ -47,7 +47,7 @@ export default function QRScanner({ onScan, onClose }) {
 
         <div id="qr-scanner-region" ref={containerRef} className="rounded-2xl overflow-hidden bg-black" />
 
-        <p className="text-[11px] text-cream/35 mt-3 text-center">শিক্ষার্থীর QR কোড ক্যামেরার সামনে ধরুন — স্ক্যান হলেই স্বয়ংক্রিয়ভাবে উপস্থিত হিসেবে চিহ্নিত হবে।</p>
+        <p className="text-xs text-cream/35 mt-3 text-center">শিক্ষার্থীর QR কোড ক্যামেরার সামনে ধরুন — স্ক্যান হলেই স্বয়ংক্রিয়ভাবে উপস্থিত হিসেবে চিহ্নিত হবে।</p>
 
         {lastResult && (
           <div className="mt-2 text-center text-xs text-emerald-400">সর্বশেষ স্ক্যান সফল ✓</div>

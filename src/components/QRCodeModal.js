@@ -27,7 +27,7 @@ export default function QRCodeModal({ student, onClose }) {
         <div className="bg-cream rounded-2xl p-3 inline-block">
           <canvas ref={canvasRef} />
         </div>
-        <p className="text-[11px] text-cream/35 mt-3">এটা প্রিন্ট করে আইডি কার্ডে বা ব্যাগে রাখুন — স্টাফ প্রতিদিন এটা স্ক্যান করে হাজিরা দেবে।</p>
+        <p className="text-xs text-cream/35 mt-3">এটা প্রিন্ট করে আইডি কার্ডে বা ব্যাগে রাখুন — স্টাফ প্রতিদিন এটা স্ক্যান করে হাজিরা দেবে।</p>
         <div className="flex gap-2 mt-4">
           <button onClick={download} className="flex-1 bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold rounded-xl py-2 text-sm">ডাউনলোড করুন</button>
           <button onClick={onClose} className="flex-1 border border-gold-500/30 text-cream/70 rounded-xl py-2 text-sm">বন্ধ করুন</button>
