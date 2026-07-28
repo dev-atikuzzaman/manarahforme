@@ -121,13 +121,13 @@ export default function GuardianPortal({ onLogout }) {
 
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   <div className="bg-ink-900/40 rounded-xl p-3">
-                    <div className="text-[11px] text-cream/40">গত ৩০ দিনের উপস্থিতি</div>
+                    <div className="text-xs text-cream/40">গত ৩০ দিনের উপস্থিতি</div>
                     <div className="text-lg font-display text-emerald-400">
                       {c.attendanceRate !== null ? `${c.attendanceRate}%` : "তথ্য নেই"}
                     </div>
                   </div>
                   <div className="bg-ink-900/40 rounded-xl p-3">
-                    <div className="text-[11px] text-cream/40">মাসিক ফি</div>
+                    <div className="text-xs text-cream/40">মাসিক ফি</div>
                     <div className="text-lg font-display text-gold-400">{c.monthly_fee ? `৳${c.monthly_fee}` : "-"}</div>
                   </div>
                 </div>
@@ -167,12 +167,12 @@ export default function GuardianPortal({ onLogout }) {
                         {expandedExam === r.exam.id && (
                           <div className="px-3 pb-3 space-y-1 border-t border-gold-500/10 pt-2">
                             {r.subjects.map((sub) => (
-                              <div key={sub.id} className="flex justify-between text-[11px] text-cream/50">
+                              <div key={sub.id} className="flex justify-between text-xs text-cream/50">
                                 <span>{sub.subject_name}</span>
                                 <span>{r.marksBySubject[sub.id] ?? "-"} / {sub.max_marks}</span>
                               </div>
                             ))}
-                            <div className="flex justify-between text-[11px] text-gold-300 pt-1 border-t border-gold-500/10 mt-1">
+                            <div className="flex justify-between text-xs text-gold-300 pt-1 border-t border-gold-500/10 mt-1">
                               <span>সর্বমোট</span>
                               <span>{r.totalObtained} / {r.totalMax}</span>
                             </div>
@@ -251,7 +251,7 @@ function FeeStatusBox({ student, onUpdated }) {
       </div>
       {showForm && (
         <form onSubmit={handleSubmit} className="mt-2 bg-ink-900/40 rounded-xl p-3 space-y-2">
-          {err && <div className="text-[11px] text-red-400">{err}</div>}
+          {err && <div className="text-xs text-red-400">{err}</div>}
           <div className="grid grid-cols-2 gap-2">
             <select className="bg-ink-900/60 border border-gold-500/20 rounded-lg px-2 py-1.5 text-xs" value={method} onChange={(e) => setMethod(e.target.value)}>
               {Object.entries(METHOD_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}

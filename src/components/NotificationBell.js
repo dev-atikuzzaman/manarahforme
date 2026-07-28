@@ -57,7 +57,7 @@ export default function NotificationBell({ institutionId, profile }) {
       >
         🔔
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -70,7 +70,7 @@ export default function NotificationBell({ institutionId, profile }) {
             <div className="px-4 py-3 border-b border-gold-500/10 flex items-center justify-between">
               <span className="text-sm font-semibold text-cream/80">নোটিফিকেশন</span>
               {permission !== "granted" && permission !== "unsupported" && (
-                <button onClick={requestPermission} className="text-[11px] text-gold-400 hover:text-gold-300">
+                <button onClick={requestPermission} className="text-xs text-gold-400 hover:text-gold-300">
                   ব্রাউজার নোটিফিকেশন চালু করুন
                 </button>
               )}
@@ -81,7 +81,7 @@ export default function NotificationBell({ institutionId, profile }) {
                 <div key={n.id} className="px-4 py-3 border-b border-gold-500/5 hover:bg-white/5">
                   <div className="text-sm text-cream/90 font-medium">{n.title}</div>
                   <div className="text-xs text-cream/50 mt-0.5">{n.message}</div>
-                  <div className="text-[10px] text-cream/30 mt-1">{new Date(n.created_at).toLocaleString("bn-BD")}</div>
+                  <div className="text-xs text-cream/30 mt-1">{new Date(n.created_at).toLocaleString("bn-BD")}</div>
                 </div>
               ))}
             </div>

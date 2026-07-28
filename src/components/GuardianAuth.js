@@ -93,7 +93,7 @@ export default function GuardianAuth({ onLoggedIn, onSetupChange, onBack }) {
             <input className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="ইমেইল" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             <input className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="পাসওয়ার্ড (৬+ ক্যারেক্টার)" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
             <input className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30 uppercase" placeholder="সন্তানের পোর্টাল কোড" value={code} onChange={(e) => setCode(e.target.value)} required />
-            <p className="text-[11px] text-cream/35">এই কোডটা প্রতিষ্ঠানের অফিস/শিক্ষক থেকে সংগ্রহ করুন।</p>
+            <p className="text-xs text-cream/35">এই কোডটা প্রতিষ্ঠানের অফিস/শিক্ষক থেকে সংগ্রহ করুন।</p>
             <button disabled={busy} className="w-full bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold rounded-xl py-2.5 transition shadow-glow disabled:opacity-50">
               {busy ? "..." : "অ্যাকাউন্ট খুলে লিংক করুন"}
             </button>
