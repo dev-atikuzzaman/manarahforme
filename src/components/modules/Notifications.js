@@ -131,7 +131,7 @@ export default function Notifications({ institutionId, profile, onToast }) {
             <div key={n.id} className="px-5 py-4">
               <div className="text-sm font-medium text-cream/90">{n.title}</div>
               <div className="text-xs text-cream/50 mt-0.5">{n.message}</div>
-              <div className="text-[10px] text-cream/30 mt-1">{new Date(n.created_at).toLocaleString("bn-BD")}</div>
+              <div className="text-xs text-cream/30 mt-1">{new Date(n.created_at).toLocaleString("bn-BD")}</div>
             </div>
           ))}
         </div>
