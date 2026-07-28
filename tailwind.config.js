@@ -21,8 +21,12 @@ module.exports = {
         cream: "#f4ead9",
       },
       fontFamily: {
-        display: ["Georgia", "'Noto Serif Bengali'", "serif"],
-        sans: ["'Hind Siliguri'", "system-ui", "sans-serif"],
+        // অগ্রাধিকার অনুযায়ী: Siyam Rupali / NikoshBan / Times New Roman — এগুলো এমবেড করা
+        // ফন্ট না, ব্যবহারকারীর ফোনে আগে থেকে ইনস্টল থাকলে (বাংলাদেশে Avro/Bijoy দিয়ে প্রায়ই
+        // থাকে) ব্রাউজার সেটাই দেখাবে। না থাকলে আমাদের এমবেড করা Noto Sans Bengali/Hind
+        // Siliguri-তে পড়বে, যাতে লেখা কখনো ভাঙা বা অদৃশ্য না হয়।
+        display: ["'Siyam Rupali'", "'NikoshBan'", "'Times New Roman'", "Georgia", "'Noto Serif Bengali'", "serif"],
+        sans: ["'Siyam Rupali'", "'NikoshBan'", "'Times New Roman'", "'Hind Siliguri'", "system-ui", "sans-serif"],
       },
       boxShadow: {
         glow: "0 0 40px rgba(245,180,0,0.15)",
