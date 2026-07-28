@@ -4,10 +4,14 @@
 
 * { box-sizing: border-box; }
 
+/* নীতি: পুরো অ্যাপে সর্বনিম্ন ফন্ট সাইজ ১২px (Tailwind-এর text-xs) — এর চেয়ে ছোট
+   কোনো text-[Npx] arbitrary class ব্যবহার করা যাবে না, পড়তে অসুবিধা হয়। */
+
 html, body {
   margin: 0;
   padding: 0;
-  font-family: 'Hind Siliguri', system-ui, sans-serif;
+  font-family: 'Siyam Rupali', 'NikoshBan', 'Times New Roman', 'Hind Siliguri', system-ui, sans-serif;
+  font-size: 16px;
   background: #04120c;
   color: #f4ead9;
 }
@@ -17,7 +21,7 @@ html, body {
 ::-webkit-scrollbar-thumb { background: rgba(245,180,0,0.35); border-radius: 8px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(245,180,0,0.6); }
 
-.font-display { font-family: 'Noto Serif Bengali', Georgia, serif; }
+.font-display { font-family: 'Siyam Rupali', 'NikoshBan', 'Times New Roman', 'Noto Serif Bengali', Georgia, serif; }
 
 .glass-card {
   background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
