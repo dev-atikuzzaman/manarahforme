@@ -8,6 +8,7 @@ export default function Settings({ profile, institution, canEdit, onInstitutionU
     <div className="space-y-6">
       <div className="flex gap-2 flex-wrap">
         <button onClick={() => setTab("institution")} className={`px-4 py-2 rounded-xl text-sm ${tab === "institution" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>প্রতিষ্ঠান</button>
+        <button onClick={() => setTab("public")} className={`px-4 py-2 rounded-xl text-sm ${tab === "public" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>পাবলিক পেজ</button>
         {branches !== null && profile.role === "super_admin" && (
           <button onClick={() => setTab("branches")} className={`px-4 py-2 rounded-xl text-sm ${tab === "branches" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>শাখা</button>
         )}
@@ -19,6 +20,9 @@ export default function Settings({ profile, institution, canEdit, onInstitutionU
 
       {tab === "institution" && (
         <InstitutionTab institution={institution} canEdit={canEdit} onInstitutionUpdate={onInstitutionUpdate} onToast={onToast} />
+      )}
+      {tab === "public" && (
+        <PublicPageTab institution={institution} canEdit={canEdit} onInstitutionUpdate={onInstitutionUpdate} onToast={onToast} />
       )}
       {tab === "branches" && branches !== null && (
         <BranchesTab branches={branches} homeInstitutionId={homeInstitutionId} onBranchCreated={onBranchCreated} onSwitchBranch={onSwitchBranch} onToast={onToast} />
@@ -243,6 +247,116 @@ function DangerTab({ institution, onToast, onLogout }) {
       <button disabled={deleting} onClick={handleDelete} className="bg-red-600 hover:bg-red-500 text-white font-semibold px-4 py-2 rounded-xl text-sm disabled:opacity-50">
         {deleting ? "মুছে ফেলা হচ্ছে..." : "স্থায়ীভাবে মুছে ফেলুন"}
       </button>
+    </div>
+  );
+}
+
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\u0980-\u09FF\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .slice(0, 60);
+}
+
+function PublicPageTab({ institution, canEdit, onInstitutionUpdate, onToast }) {
+  const [slug, setSlug] = useState(institution.public_slug || "");
+  const [description, setDescription] = useState(institution.description || "");
+  const [publicPhone, setPublicPhone] = useState(institution.public_phone || "");
+  const [publicAddress, setPublicAddress] = useState(institution.public_address || "");
+  const [saving, setSaving] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [slugError, setSlugError] = useState("");
+
+  const publicUrl = slug ? `${window.location.origin}/p/${slug}` : null;
+
+  async function handleEnable() {
+    if (!slug) setSlug(slugify(institution.name));
+  }
+
+  async function saveSettings(e) {
+    e.preventDefault();
+    setSlugError("");
+    const cleanSlug = slugify(slug);
+    if (!cleanSlug) return setSlugError("একটা বৈধ স্লাগ দিন।");
+
+    setChecking(true);
+    const { data: existing } = await supabase.from("institutions").select("id").eq("public_slug", cleanSlug).neq("id", institution.id).maybeSingle();
+    setChecking(false);
+    if (existing) return setSlugError("এই লিংক ইতিমধ্যে অন্য প্রতিষ্ঠান ব্যবহার করছে, ভিন্ন কিছু দিন।");
+
+    setSaving(true);
+    const { error } = await supabase.from("institutions").update({
+      public_slug: cleanSlug,
+      description,
+      public_phone: publicPhone,
+      public_address: publicAddress,
+    }).eq("id", institution.id);
+    setSaving(false);
+    if (error) return onToast({ type: "error", message: error.message });
+    setSlug(cleanSlug);
+    onInstitutionUpdate({ ...institution, public_slug: cleanSlug, description, public_phone: publicPhone, public_address: publicAddress });
+    onToast({ message: "পাবলিক পেজ হালনাগাদ হয়েছে" });
+  }
+
+  async function disablePublicPage() {
+    if (!window.confirm("পাবলিক পেজ বন্ধ করলে লিংকটা আর কাজ করবে না। নিশ্চিত?")) return;
+    const { error } = await supabase.from("institutions").update({ public_slug: null }).eq("id", institution.id);
+    if (error) return onToast({ type: "error", message: error.message });
+    setSlug("");
+    onInstitutionUpdate({ ...institution, public_slug: null });
+    onToast({ message: "পাবলিক পেজ বন্ধ করা হয়েছে" });
+  }
+
+  return (
+    <div className="space-y-5 max-w-xl">
+      <div className="glass-card rounded-2xl p-6 space-y-2">
+        <p className="text-xs text-cream/45 leading-relaxed">
+          পাবলিক পেজ চালু করলে যে কেউ (লগইন ছাড়াই) আপনার প্রতিষ্ঠানের একটা পেজ দেখতে পারবে আর সরাসরি bKash/Nagad/Rocket/Upay দিয়ে দান জমা দিতে পারবে — জমা দেওয়া দান "যাচাইয়ের অপেক্ষায়" থাকবে, "দান ও যাকাত" ট্যাব থেকে আপনি যাচাই করবেন।
+        </p>
+      </div>
+
+      {!institution.public_slug && !slug && canEdit && (
+        <button onClick={handleEnable} className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold px-5 py-2.5 rounded-xl text-sm">
+          পাবলিক পেজ চালু করুন
+        </button>
+      )}
+
+      {(institution.public_slug || slug) && (
+        <form onSubmit={saveSettings} className="glass-card rounded-2xl p-6 space-y-3">
+          <div>
+            <div className="text-xs text-cream/50 mb-1">পেজের লিংক</div>
+            <div className="flex items-center gap-1 flex-wrap">
+              <span className="text-xs text-cream/40">{window.location.origin}/p/</span>
+              <input disabled={!canEdit} className="bg-ink-900/60 border border-gold-500/20 rounded-lg px-2 py-1 text-sm flex-1 min-w-[120px]" value={slug} onChange={(e) => setSlug(e.target.value)} />
+            </div>
+            {slugError && <p className="text-xs text-red-400 mt-1">{slugError}</p>}
+          </div>
+
+          <textarea disabled={!canEdit} placeholder="প্রতিষ্ঠান সম্পর্কে সংক্ষিপ্ত বিবরণ" rows={3} className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={description} onChange={(e) => setDescription(e.target.value)} />
+          <input disabled={!canEdit} placeholder="যোগাযোগের ফোন নম্বর (পাবলিক)" className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={publicPhone} onChange={(e) => setPublicPhone(e.target.value)} />
+          <input disabled={!canEdit} placeholder="ঠিকানা" className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={publicAddress} onChange={(e) => setPublicAddress(e.target.value)} />
+
+          {canEdit && (
+            <div className="flex gap-2">
+              <button disabled={saving || checking} className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold px-4 py-2 rounded-xl text-sm disabled:opacity-50">
+                {saving || checking ? "..." : "সংরক্ষণ করুন"}
+              </button>
+              {institution.public_slug && (
+                <button type="button" onClick={disablePublicPage} className="text-xs text-red-400 hover:text-red-300 ml-auto self-center">পাবলিক পেজ বন্ধ করুন</button>
+              )}
+            </div>
+          )}
+
+          {institution.public_slug && publicUrl && (
+            <div className="pt-2 border-t border-gold-500/10 flex items-center gap-3">
+              <a href={publicUrl} target="_blank" rel="noreferrer" className="text-xs text-gold-400 hover:text-gold-300 underline">{publicUrl}</a>
+              <button type="button" onClick={() => navigator.clipboard.writeText(publicUrl)} className="text-xs text-cream/40 hover:text-cream/60">কপি করুন</button>
+            </div>
+          )}
+        </form>
+      )}
     </div>
   );
 }

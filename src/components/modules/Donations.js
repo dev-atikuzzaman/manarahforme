@@ -78,7 +78,21 @@ export default function Donations({ institutionId, institutionName, canEdit, onT
     setForm({ donor_name: "", amount: "", purpose: "সাধারণ দান", note: "", payment_method: "cash", transaction_id: "" });
   }
 
-  const total = rows.reduce((s, r) => s + Number(r.amount || 0), 0);
+  const verifiedRows = rows.filter((r) => (r.verification_status || "verified") === "verified");
+  const pendingRows = rows.filter((r) => r.verification_status === "pending");
+  const total = verifiedRows.reduce((s, r) => s + Number(r.amount || 0), 0);
+
+  async function verifyDonation(id) {
+    const { error } = await supabase.from("donations").update({ verification_status: "verified" }).eq("id", id);
+    if (error) onToast({ type: "error", message: error.message });
+    else onToast({ message: "দান যাচাই সম্পন্ন হয়েছে" });
+  }
+
+  async function rejectDonation(id) {
+    const { error } = await supabase.from("donations").update({ verification_status: "rejected" }).eq("id", id);
+    if (error) onToast({ type: "error", message: error.message });
+    else onToast({ message: "প্রত্যাখ্যান করা হয়েছে" });
+  }
 
   const [downloadingId, setDownloadingId] = useState(null);
   async function downloadReceipt(r) {
@@ -145,6 +159,24 @@ export default function Donations({ institutionId, institutionName, canEdit, onT
             </form>
           )}
 
+          {canEdit && pendingRows.length > 0 && (
+            <div className="glass-card rounded-2xl overflow-hidden border-gold-500/30">
+              <div className="px-5 py-3 border-b border-gold-500/10 text-sm text-gold-300">পাবলিক পেজ থেকে জমা — যাচাইয়ের অপেক্ষায় ({pendingRows.length})</div>
+              {pendingRows.map((r) => (
+                <div key={r.id} className="px-5 py-3 border-b border-gold-500/5 flex flex-wrap items-center justify-between gap-2 text-sm">
+                  <div>
+                    <div className="text-cream/90">{r.donor_name} · ৳{Number(r.amount).toLocaleString("bn-BD")} · {r.purpose}</div>
+                    <div className="text-xs text-cream/40">{r.payment_method} · TrxID: {r.transaction_id} · {r.note}</div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={() => verifyDonation(r.id)} className="text-xs bg-emerald-600/20 border border-emerald-500/30 text-emerald-300 px-3 py-1.5 rounded-lg hover:bg-emerald-600/30">যাচাই করুন</button>
+                    <button onClick={() => rejectDonation(r.id)} className="text-xs bg-red-500/15 border border-red-500/30 text-red-300 px-3 py-1.5 rounded-lg hover:bg-red-500/25">প্রত্যাখ্যান</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="glass-card rounded-2xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -159,8 +191,8 @@ export default function Donations({ institutionId, institutionName, canEdit, onT
                 </thead>
                 <tbody>
                   {loading && <tr><td colSpan={5} className="px-4 py-6 text-center text-cream/40">লোড হচ্ছে...</td></tr>}
-                  {!loading && rows.length === 0 && <tr><td colSpan={5} className="px-4 py-6 text-center text-cream/40">এখনও কোনো দান রেকর্ড হয়নি।</td></tr>}
-                  {rows.map((r) => (
+                  {!loading && verifiedRows.length === 0 && <tr><td colSpan={5} className="px-4 py-6 text-center text-cream/40">এখনও কোনো দান রেকর্ড হয়নি।</td></tr>}
+                  {verifiedRows.map((r) => (
                     <tr key={r.id} className="border-b border-gold-500/5 hover:bg-white/5">
                       <td className="px-4 py-3">{r.donor_name}</td>
                       <td className="px-4 py-3 text-cream/60">{r.purpose}</td>
