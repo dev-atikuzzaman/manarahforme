@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import DateWidget from "../DateWidget";
 
 const TILES = [
   { key: "students", label: "শিক্ষার্থী/সদস্য", icon: "✎", desc: "ভর্তি, তথ্য, পোর্টাল কোড" },
@@ -55,6 +56,8 @@ export default function Overview({ institutionId, inviteCode, onNavigate, canEdi
 
   return (
     <div className="space-y-6">
+      <DateWidget />
+
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((c) => (
           <div key={c.label} className="glass-card rounded-2xl p-5">
