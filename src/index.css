@@ -7,30 +7,10 @@
 /* নীতি: পুরো অ্যাপে সর্বনিম্ন ফন্ট সাইজ ১২px (Tailwind-এর text-xs) — এর চেয়ে ছোট
    কোনো text-[Npx] arbitrary class ব্যবহার করা যাবে না, পড়তে অসুবিধা হয়। */
 
-/* এই ৪টা ফন্ট মুক্ত লাইসেন্সে বিতরণযোগ্য বলে সরাসরি এমবেড করা হলো (public/fonts/)।
-   Times New Roman এমবেড করা হয়নি — এটা Monotype-এর কপিরাইটকৃত ফন্ট, ওয়েব অ্যাপে
-   ফাইল হিসেবে বিতরণ করার অনুমতি নেই। ব্যবহারকারীর ডিভাইসে আগে থেকে ইনস্টল থাকলে
-   ফন্ট-স্ট্যাকে নাম রেফারেন্স হিসেবে থাকছে (কোনো ফাইল ছাড়াই), ব্রাউজার নিজেই খুঁজে নেবে। */
-@font-face {
-  font-family: 'Siyam Rupali';
-  src: url('/fonts/SiyamRupali.ttf') format('truetype');
-  font-display: swap;
-}
-@font-face {
-  font-family: 'NikoshBAN';
-  src: url('/fonts/NikoshBAN.ttf') format('truetype');
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Nikosh';
-  src: url('/fonts/Nikosh.ttf') format('truetype');
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Kalpurush';
-  src: url('/fonts/Kalpurush.ttf') format('truetype');
-  font-display: swap;
-}
+/* এই ৪টা এমবেডেড ফন্টের @font-face ডিক্লেয়ারেশন public/index.html-এ রাখা হয়েছে,
+   এখানে না — কারণ src/ ফোল্ডারের CSS-এ absolute url('/fonts/...') webpack ভুলবশত
+   মডিউল ইমপোর্ট হিসেবে ধরার চেষ্টা করে এবং বিল্ড ব্যর্থ করে। index.html টেমপ্লেট
+   হিসেবে সরাসরি সার্ভ হয় বলে সেখানে %PUBLIC_URL% দিয়ে রেফারেন্স দিলে সমস্যা হয় না। */
 
 /* --app-font ও --app-font-scale জাভাস্ক্রিপ্ট (src/lib/displayPrefs.js) থেকে
    পরিবর্তন করা হয় — সেটিংসে ফন্ট/সাইজ বাছাই করলেই পুরো অ্যাপে সাথে সাথে প্রয়োগ হয়,
