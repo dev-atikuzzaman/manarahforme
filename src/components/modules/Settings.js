@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { supabase } from "../../lib/supabase";
+import DisplayPreferences from "../DisplayPreferences";
 
 export default function Settings({ profile, institution, canEdit, onInstitutionUpdate, onToast, onLogout, branches, homeInstitutionId, onBranchCreated, onSwitchBranch }) {
   const [tab, setTab] = useState("institution");
@@ -13,6 +14,7 @@ export default function Settings({ profile, institution, canEdit, onInstitutionU
           <button onClick={() => setTab("branches")} className={`px-4 py-2 rounded-xl text-sm ${tab === "branches" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>শাখা</button>
         )}
         <button onClick={() => setTab("profile")} className={`px-4 py-2 rounded-xl text-sm ${tab === "profile" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>আমার প্রোফাইল</button>
+        <button onClick={() => setTab("display")} className={`px-4 py-2 rounded-xl text-sm ${tab === "display" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>ফন্ট ও সাইজ</button>
         {profile.role === "super_admin" && (
           <button onClick={() => setTab("danger")} className={`px-4 py-2 rounded-xl text-sm ${tab === "danger" ? "bg-red-500/15 text-red-300 border border-red-500/30" : "text-cream/50 border border-white/10"}`}>বিপজ্জনক এলাকা</button>
         )}
@@ -28,6 +30,7 @@ export default function Settings({ profile, institution, canEdit, onInstitutionU
         <BranchesTab branches={branches} homeInstitutionId={homeInstitutionId} onBranchCreated={onBranchCreated} onSwitchBranch={onSwitchBranch} onToast={onToast} />
       )}
       {tab === "profile" && <ProfileTab profile={profile} onToast={onToast} />}
+      {tab === "display" && <DisplayPreferences />}
       {tab === "danger" && profile.role === "super_admin" && (
         <DangerTab institution={institution} onToast={onToast} onLogout={onLogout} />
       )}
