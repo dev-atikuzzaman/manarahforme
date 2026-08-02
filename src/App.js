@@ -27,6 +27,7 @@ import GuardianPortal from "./components/GuardianPortal";
 import OwnerDashboard from "./components/OwnerDashboard";
 import OwnerAuth from "./components/OwnerAuth";
 import ResetPassword from "./components/ResetPassword";
+import DateWidget from "./components/DateWidget";
 
 export default function App() {
   const [showAuth, setShowAuth] = useState(false);
@@ -312,10 +313,10 @@ export default function App() {
       />
 
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-gold-500/10">
+        <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b border-gold-500/10 flex-wrap">
           <button onClick={() => setSidebarOpen(true)} className="text-gold-400 text-xl md:hidden">☰</button>
           <span className="font-display text-gold-400 md:hidden">মানারাহ</span>
-          <span className="hidden md:block" />
+          <DateWidget compact />
           <NotificationBell institutionId={viewInstitution?.id} profile={profile} />
         </div>
 
