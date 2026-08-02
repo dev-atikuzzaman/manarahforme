@@ -7,11 +7,47 @@
 /* নীতি: পুরো অ্যাপে সর্বনিম্ন ফন্ট সাইজ ১২px (Tailwind-এর text-xs) — এর চেয়ে ছোট
    কোনো text-[Npx] arbitrary class ব্যবহার করা যাবে না, পড়তে অসুবিধা হয়। */
 
+/* এই ৪টা ফন্ট মুক্ত লাইসেন্সে বিতরণযোগ্য বলে সরাসরি এমবেড করা হলো (public/fonts/)।
+   Times New Roman এমবেড করা হয়নি — এটা Monotype-এর কপিরাইটকৃত ফন্ট, ওয়েব অ্যাপে
+   ফাইল হিসেবে বিতরণ করার অনুমতি নেই। ব্যবহারকারীর ডিভাইসে আগে থেকে ইনস্টল থাকলে
+   ফন্ট-স্ট্যাকে নাম রেফারেন্স হিসেবে থাকছে (কোনো ফাইল ছাড়াই), ব্রাউজার নিজেই খুঁজে নেবে। */
+@font-face {
+  font-family: 'Siyam Rupali';
+  src: url('/fonts/SiyamRupali.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'NikoshBAN';
+  src: url('/fonts/NikoshBAN.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nikosh';
+  src: url('/fonts/Nikosh.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Kalpurush';
+  src: url('/fonts/Kalpurush.ttf') format('truetype');
+  font-display: swap;
+}
+
+/* --app-font ও --app-font-scale জাভাস্ক্রিপ্ট (src/lib/displayPrefs.js) থেকে
+   পরিবর্তন করা হয় — সেটিংসে ফন্ট/সাইজ বাছাই করলেই পুরো অ্যাপে সাথে সাথে প্রয়োগ হয়,
+   কোনো রিলোড ছাড়াই, কারণ html/body এই ভ্যারিয়েবলগুলোর ওপর নির্ভর করে। */
+:root {
+  --app-font: 'Siyam Rupali', 'NikoshBAN', 'Times New Roman', 'Hind Siliguri', system-ui, sans-serif;
+  --app-font-scale: 16px;
+}
+
+html {
+  font-size: var(--app-font-scale);
+}
+
 html, body {
   margin: 0;
   padding: 0;
-  font-family: 'Siyam Rupali', 'NikoshBan', 'Times New Roman', 'Hind Siliguri', system-ui, sans-serif;
-  font-size: 16px;
+  font-family: var(--app-font);
   background: #04120c;
   color: #f4ead9;
 }
@@ -21,7 +57,7 @@ html, body {
 ::-webkit-scrollbar-thumb { background: rgba(245,180,0,0.35); border-radius: 8px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(245,180,0,0.6); }
 
-.font-display { font-family: 'Siyam Rupali', 'NikoshBan', 'Times New Roman', 'Noto Serif Bengali', Georgia, serif; }
+.font-display { font-family: var(--app-font); }
 
 .glass-card {
   background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
