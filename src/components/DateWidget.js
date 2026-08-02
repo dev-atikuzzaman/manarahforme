@@ -1,19 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { getBengaliDate, getHijriDate, getBengaliWeekday, getEnglishDate, toBnDigits } from "../lib/calendars";
 
-export default function DateWidget() {
+function useToday() {
   const [now, setNow] = useState(() => new Date());
-
   useEffect(() => {
     // মধ্যরাতে তারিখ নিজে থেকে বদলে যাক
     const timer = setInterval(() => setNow(new Date()), 60 * 1000);
     return () => clearInterval(timer);
   }, []);
+  return now;
+}
 
+export default function DateWidget({ compact = false }) {
+  const now = useToday();
   const weekday = getBengaliWeekday(now);
   const en = getEnglishDate(now);
   const bn = getBengaliDate(now);
   const hijri = getHijriDate(now);
+
+  if (compact) {
+    return (
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+        <span className="font-display text-gold-300">{weekday}</span>
+        <span className="text-cream/30">·</span>
+        <span className="text-cream/60">{en.day} {en.month}, {en.year}</span>
+        <span className="text-cream/30 hidden sm:inline">·</span>
+        <span className="text-gold-400/80 hidden sm:inline">{toBnDigits(bn.day)} {bn.month} {toBnDigits(bn.year)}</span>
+        <span className="text-cream/30 hidden md:inline">·</span>
+        {hijri && <span className="text-cream/50 hidden md:inline">{toBnDigits(hijri.day)} {hijri.month} {toBnDigits(hijri.year)} হি.</span>}
+      </div>
+    );
+  }
 
   return (
     <div className="glass-card rounded-2xl overflow-hidden relative">
