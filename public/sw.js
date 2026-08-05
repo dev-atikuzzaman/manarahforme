@@ -1,4 +1,4 @@
-const CACHE_NAME = "manarah-cache-v2";
+const CACHE_NAME = "manarah-cache-v3";
 const OFFLINE_URLS = ["/", "/index.html", "/manifest.json"];
 
 self.addEventListener("install", (event) => {
