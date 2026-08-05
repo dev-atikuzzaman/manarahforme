@@ -17,6 +17,7 @@ const NAV = [
   { key: "reports", label: "রিপোর্ট ও এক্সপোর্ট", icon: "⬇" },
   { key: "members", label: "সদস্য অনুমোদন", icon: "⚑" },
   { key: "subscription", label: "সাবস্ক্রিপশন", icon: "💳" },
+  { key: "display", label: "ফন্ট ও সাইজ", icon: "Aa" },
   { key: "settings", label: "সেটিংস", icon: "⚙" },
 ];
 
