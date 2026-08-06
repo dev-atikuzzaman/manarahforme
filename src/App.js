@@ -29,6 +29,7 @@ import OwnerDashboard from "./components/OwnerDashboard";
 import OwnerAuth from "./components/OwnerAuth";
 import ResetPassword from "./components/ResetPassword";
 import DateWidget from "./components/DateWidget";
+import GlobalSearch from "./components/GlobalSearch";
 
 export default function App() {
   const [showAuth, setShowAuth] = useState(false);
@@ -51,6 +52,7 @@ export default function App() {
   const [active, setActive] = useState("overview");
   const [toast, setToast] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   // ব্যাক বাটন চাপলে সরাসরি অ্যাপ থেকে বের হয়ে না গিয়ে আগের ট্যাবে (বা আগের শাখায়) ফিরে যাক —
   // এজন্য প্রতিটা ট্যাব-বদল/শাখা-বদল ব্রাউজার হিস্ট্রিতে একটা এন্ট্রি যোগ করে, আর ব্যাক বাটনে
@@ -318,8 +320,17 @@ export default function App() {
           <button onClick={() => setSidebarOpen(true)} className="text-gold-400 text-xl md:hidden">☰</button>
           <span className="font-display text-gold-400 md:hidden">মানারাহ</span>
           <DateWidget compact />
-          <NotificationBell institutionId={viewInstitution?.id} profile={profile} />
+          <div className="flex items-center gap-2">
+            <button onClick={() => setSearchOpen(true)} className="w-9 h-9 flex items-center justify-center rounded-full border border-gold-500/20 text-gold-400 hover:bg-white/5" aria-label="খুঁজুন">
+              🔍
+            </button>
+            <NotificationBell institutionId={viewInstitution?.id} profile={profile} />
+          </div>
         </div>
+
+        {searchOpen && (
+          <GlobalSearch institutionId={viewInstitution?.id} onNavigate={navigate} onClose={() => setSearchOpen(false)} />
+        )}
 
         <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
           {active === "overview" && <Overview institutionId={viewInstitution?.id} inviteCode={viewInstitution?.invite_code} onNavigate={navigate} canEdit={canEdit} />}
