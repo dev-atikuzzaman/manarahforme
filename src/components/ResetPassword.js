@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { supabase } from "../lib/supabase";
+import Logo from "./Logo";
 
 export default function ResetPassword({ onDone }) {
   const [password, setPassword] = useState("");
@@ -24,6 +25,7 @@ export default function ResetPassword({ onDone }) {
 
       <div className="relative z-10 w-full max-w-md glass-card rounded-3xl p-8 anim-in">
         <div className="text-center mb-6">
+          <Logo size={44} className="mx-auto mb-2" />
           <div className="text-3xl font-display text-gold-400 mb-1">মানারাহ</div>
           <div className="text-cream/50 text-sm">নতুন পাসওয়ার্ড সেট করুন</div>
         </div>

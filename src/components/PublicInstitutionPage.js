@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import Logo from "./Logo";
 
 const METHOD_LABEL = { bkash: "বিকাশ", nagad: "নগদ", rocket: "রকেট", upay: "উপায়", bank: "ব্যাংক", other: "অন্যান্য" };
 
@@ -78,7 +79,9 @@ export default function PublicInstitutionPage({ slug }) {
           <DonationForm institutionId={institution.id} onDone={() => setShowForm(false)} />
         )}
 
-        <div className="text-center mt-10 text-xs text-cream/25">এই পেজটা মানারাহ দিয়ে তৈরি</div>
+        <div className="flex items-center justify-center gap-1.5 mt-10 text-xs text-cream/25">
+          <Logo size={14} />এই পেজটা মানারাহ দিয়ে তৈরি
+        </div>
       </div>
     </div>
   );

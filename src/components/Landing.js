@@ -1,4 +1,5 @@
 import React from "react";
+import Logo from "./Logo";
 
 const FEATURES = [
   { title: "উপস্থিতি ও হিফজ ট্র্যাকিং", desc: "প্রতিদিনের হাজিরা ও হিফজ অগ্রগতি এক ট্যাপে রেকর্ড হবে, রিয়েল-টাইমে সবাই দেখবে।" },
@@ -26,7 +27,8 @@ export default function Landing({ onGetStarted, onGuardianPortal, onOwnerPortal 
       <div className="relative z-10">
         {/* Nav */}
         <nav className="max-w-6xl mx-auto flex items-center justify-between px-6 py-6">
-          <button onClick={onOwnerPortal} className="font-display text-2xl sm:text-3xl text-gold-400 hover:text-gold-300 transition">
+          <button onClick={onOwnerPortal} className="flex items-center gap-2 font-display text-2xl sm:text-3xl text-gold-400 hover:text-gold-300 transition">
+            <Logo size={30} />
             মানারাহ
           </button>
           <div className="hidden md:flex items-center gap-8 text-sm text-cream/70">

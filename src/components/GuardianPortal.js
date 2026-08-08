@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { gradeOf } from "../lib/grading";
+import Logo from "./Logo";
 
 export default function GuardianPortal({ onLogout }) {
   const [children, setChildren] = useState([]);
@@ -96,9 +97,12 @@ export default function GuardianPortal({ onLogout }) {
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-8">
         <div className="flex items-center justify-between mb-8">
-          <div>
-            <div className="font-display text-2xl text-gold-400">মানারাহ</div>
-            <div className="text-xs text-cream/40">অভিভাবক পোর্টাল</div>
+          <div className="flex items-center gap-2.5">
+            <Logo size={30} />
+            <div>
+              <div className="font-display text-2xl text-gold-400">মানারাহ</div>
+              <div className="text-xs text-cream/40">অভিভাবক পোর্টাল</div>
+            </div>
           </div>
           <button onClick={onLogout} className="text-xs text-cream/50 hover:text-red-300">লগআউট</button>
         </div>

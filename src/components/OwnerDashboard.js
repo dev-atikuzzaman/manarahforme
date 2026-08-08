@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
+import Logo from "./Logo";
 
 const STATUS_LABEL = { trial: "ট্রায়াল", active: "সক্রিয়", suspended: "স্থগিত" };
 const STATUS_COLOR = {
@@ -152,9 +153,12 @@ export default function OwnerDashboard({ onSwitchToInstitution, hasOwnInstitutio
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
-          <div>
-            <div className="font-display text-2xl text-gold-400">মানারাহ</div>
-            <div className="text-xs text-cream/40">প্ল্যাটফর্ম ওনার প্যানেল</div>
+          <div className="flex items-center gap-2.5">
+            <Logo size={30} />
+            <div>
+              <div className="font-display text-2xl text-gold-400">মানারাহ</div>
+              <div className="text-xs text-cream/40">প্ল্যাটফর্ম ওনার প্যানেল</div>
+            </div>
           </div>
           <div className="flex items-center gap-3">
             {hasOwnInstitution && (
