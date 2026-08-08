@@ -4,6 +4,7 @@ import Logo from "./Logo";
 
 export default function ResetPassword({ onDone }) {
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [done, setDone] = useState(false);
@@ -11,6 +12,7 @@ export default function ResetPassword({ onDone }) {
   async function handleSubmit(e) {
     e.preventDefault();
     if (password.length < 6) return setErr("পাসওয়ার্ড কমপক্ষে ৬ ক্যারেক্টার হতে হবে।");
+    if (password !== confirmPassword) return setErr("দুটো পাসওয়ার্ড মিলছে না — আবার লিখুন।");
     setErr(""); setBusy(true);
     const { error } = await supabase.auth.updateUser({ password });
     setBusy(false);
@@ -48,6 +50,14 @@ export default function ResetPassword({ onDone }) {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <input
+              className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30"
+              placeholder="পাসওয়ার্ড আবার লিখুন (কনফার্ম)"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
             <button disabled={busy} className="w-full bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold rounded-xl py-2.5 disabled:opacity-50">

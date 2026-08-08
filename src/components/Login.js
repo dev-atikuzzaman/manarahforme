@@ -17,7 +17,7 @@ function safeMessage(error, fallback) {
 }
 
 export default function Login({ onLoggedIn, onSetupChange }) {
-  const [mode, setMode] = useState("login"); // login | create | join
+  const [mode, setMode] = useState("login"); // login | create | join | forgot
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -38,6 +38,34 @@ export default function Login({ onLoggedIn, onSetupChange }) {
       setErr(safeMessage(ex, "লগইন করা যায়নি, নেটওয়ার্ক সমস্যা হতে পারে।"));
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function handleForgotPassword(e) {
+    e.preventDefault();
+    setErr(""); setInfo(""); setBusy(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+      if (error) return setErr(safeMessage(error, "রিসেট লিংক পাঠানো যায়নি।"));
+      setInfo("পাসওয়ার্ড রিসেট লিংক ইমেইলে পাঠানো হয়েছে। ইমেইল চেক করে লিংকে ক্লিক করুন, এরপর নতুন পাসওয়ার্ড ও কনফার্ম পাসওয়ার্ড দিয়ে সেট করতে পারবেন।");
+    } catch (ex) {
+      setErr(safeMessage(ex, "রিসেট লিংক পাঠানো যায়নি, নেটওয়ার্ক সমস্যা হতে পারে।"));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleGoogleSignIn() {
+    setErr("");
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin },
+      });
+      if (error) setErr(safeMessage(error, "Google দিয়ে প্রবেশ করা যায়নি।"));
+      // সফল হলে ব্রাউজার Google-এ রিডাইরেক্ট হয়ে যাবে, তারপর ফিরে এসে সেশন এমনিতেই তৈরি হয়ে যাবে
+    } catch (ex) {
+      setErr(safeMessage(ex, "Google দিয়ে প্রবেশ করা যায়নি।"));
     }
   }
 
@@ -142,7 +170,7 @@ export default function Login({ onLoggedIn, onSetupChange }) {
 
         <div className="motif-divider text-xs mb-6">
           <span>
-            {mode === "login" ? "প্রবেশ করুন" : mode === "create" ? "নতুন প্রতিষ্ঠান" : "প্রতিষ্ঠানে যোগ দিন"}
+            {mode === "login" ? "প্রবেশ করুন" : mode === "create" ? "নতুন প্রতিষ্ঠান" : mode === "forgot" ? "পাসওয়ার্ড রিসেট" : "প্রতিষ্ঠানে যোগ দিন"}
           </span>
         </div>
 
@@ -164,10 +192,39 @@ export default function Login({ onLoggedIn, onSetupChange }) {
             <button disabled={busy} className="w-full bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold rounded-xl py-2.5 transition shadow-glow disabled:opacity-50">
               {busy ? "..." : "লগইন করুন"}
             </button>
+
+            <div className="motif-divider text-[11px] py-1"><span>অথবা</span></div>
+
+            <button type="button" onClick={handleGoogleSignIn} className="w-full flex items-center justify-center gap-2 bg-white hover:bg-cream text-ink-950 font-medium rounded-xl py-2.5 transition text-sm">
+              <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.4-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.8 1.1 8 3l6-6C34.6 5.1 29.6 3 24 3c-7.7 0-14.4 4.4-17.7 10.7z"/><path fill="#4CAF50" d="M24 45c5.5 0 10.4-1.9 14.3-5.1l-6.6-5.6C29.6 36 26.9 37 24 37c-5.2 0-9.6-3.3-11.3-7.9l-6.6 5.1C9.5 40.5 16.2 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4 5.6l6.6 5.6C41.5 36.4 45 30.9 45 24c0-1.4-.1-2.7-.4-3.5z"/></svg>
+              Google দিয়ে প্রবেশ করুন
+            </button>
+
             <div className="flex justify-between text-xs text-cream/50 pt-2">
+              <button type="button" onClick={() => setMode("forgot")} className="hover:text-gold-400">পাসওয়ার্ড ভুলে গেছেন?</button>
               <button type="button" onClick={() => setMode("create")} className="hover:text-gold-400">নতুন প্রতিষ্ঠান খুলুন</button>
+            </div>
+            <div className="text-center text-xs text-cream/50">
               <button type="button" onClick={() => setMode("join")} className="hover:text-gold-400">কোড দিয়ে যোগ দিন</button>
             </div>
+          </form>
+        )}
+
+        {mode === "forgot" && (
+          <form onSubmit={handleForgotPassword} className="space-y-3">
+            <p className="text-[11px] text-cream/35">ইমেইল দাও, পাসওয়ার্ড রিসেট লিংক পাঠানো হবে — লিংকে ক্লিক করে নতুন পাসওয়ার্ড ও কনফার্ম পাসওয়ার্ড দিয়ে সেট করতে পারবে।</p>
+            <input className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="ইমেইল" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <button disabled={busy} className="w-full bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold rounded-xl py-2.5 transition shadow-glow disabled:opacity-50">
+              {busy ? "..." : "রিসেট লিংক পাঠান"}
+            </button>
+
+            <div className="motif-divider text-[11px] py-1"><span>অথবা</span></div>
+            <button type="button" onClick={handleGoogleSignIn} className="w-full flex items-center justify-center gap-2 bg-white hover:bg-cream text-ink-950 font-medium rounded-xl py-2.5 transition text-sm">
+              <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.4-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.8 1.1 8 3l6-6C34.6 5.1 29.6 3 24 3c-7.7 0-14.4 4.4-17.7 10.7z"/><path fill="#4CAF50" d="M24 45c5.5 0 10.4-1.9 14.3-5.1l-6.6-5.6C29.6 36 26.9 37 24 37c-5.2 0-9.6-3.3-11.3-7.9l-6.6 5.1C9.5 40.5 16.2 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4 5.6l6.6 5.6C41.5 36.4 45 30.9 45 24c0-1.4-.1-2.7-.4-3.5z"/></svg>
+              Google একাউন্ট দিয়ে সরাসরি প্রবেশ করুন
+            </button>
+
+            <button type="button" onClick={() => setMode("login")} className="w-full text-xs text-cream/50 hover:text-gold-400 pt-1">← লগইনে ফিরুন</button>
           </form>
         )}
 
