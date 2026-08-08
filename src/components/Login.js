@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { supabase } from "../lib/supabase";
+import Logo from "./Logo";
 
 // error.message কখনো কখনো ফাঁকা অবজেক্ট ("{}") বা খালি স্ট্রিং হয়ে আসে (নেটওয়ার্ক/CORS/কনফিগারেশন
 // সমস্যায়) — এই ফাংশন সবসময় একটা বোঝা যায় এমন বার্তা নিশ্চিত করে, আর ডিবাগের জন্য raw ডাটা যোগ করে।
@@ -134,6 +135,7 @@ export default function Login({ onLoggedIn, onSetupChange }) {
 
       <div className="relative z-10 w-full max-w-md glass-card rounded-3xl p-8 anim-in">
         <div className="text-center mb-6">
+          <Logo size={44} className="mx-auto mb-2" />
           <div className="text-3xl font-display text-gold-400 mb-1">মানারাহ</div>
           <div className="text-cream/50 text-sm">মসজিদ ও মাদ্রাসা ম্যানেজমেন্ট</div>
         </div>

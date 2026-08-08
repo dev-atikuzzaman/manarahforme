@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { supabase } from "../lib/supabase";
+import Logo from "./Logo";
 
 function safeMessage(error, fallback) {
   if (!error) return fallback;
@@ -90,6 +91,7 @@ export default function OwnerAuth({ onLoggedIn, onSetupChange, onBack }) {
           <div className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider text-violet-300 bg-violet-500/15 border border-violet-400/30 rounded-full px-3 py-1 mb-3">
             🔒 সীমিত অ্যাক্সেস
           </div>
+          <Logo size={40} className="mx-auto mb-2" />
           <div className="text-2xl font-display text-violet-200">মানারাহ প্ল্যাটফর্ম</div>
           <div className="text-cream/40 text-sm mt-1">এটা সাধারণ প্রতিষ্ঠান/স্টাফ লগইন না — এটা পুরো অ্যাপের মালিকের প্যানেল।</div>
         </div>
