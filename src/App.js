@@ -24,6 +24,7 @@ import DisplayPreferences from "./components/DisplayPreferences";
 import SubscriptionPayment from "./components/modules/SubscriptionPayment";
 import NotificationBell from "./components/NotificationBell";
 import GuardianAuth from "./components/GuardianAuth";
+import CompleteSetup from "./components/CompleteSetup";
 import GuardianPortal from "./components/GuardianPortal";
 import OwnerDashboard from "./components/OwnerDashboard";
 import OwnerAuth from "./components/OwnerAuth";
@@ -221,26 +222,19 @@ export default function App() {
     if (guardianLinkCount > 0 || forceGuardianView) {
       return <GuardianPortal onLogout={handleLogout} />;
     }
+    // কোনো profiles/platform_admins/guardian_links রো নেই — যেমনটা হয় যখন কেউ
+    // লগইন পেজ থেকে সরাসরি Google দিয়ে ঢুকে ফেলে, প্রতিষ্ঠান তৈরি/জয়েন না করেই।
+    // আগে এখানে একটা ডেড-এন্ড এরর কার্ড দেখানো হতো — এখন সরাসরি সেটআপ করার সুযোগ দেওয়া হয়।
     return (
-      <div className="min-h-screen bg-ink-950 flex items-center justify-center px-6 text-center">
-        <div className="glass-card rounded-3xl p-10 max-w-md space-y-4">
-          <div className="font-display text-xl text-gold-400">এই অ্যাকাউন্টে কোনো ভূমিকা পাওয়া যায়নি</div>
-          <p className="text-sm text-cream/50 leading-relaxed">
-            এই ইমেইল ({session.user.email}) কোনো প্রতিষ্ঠানের স্টাফ না, প্ল্যাটফর্ম ওনার না, আর কোনো সন্তানও লিংক করা নেই।
-            যদি তুমি অভিভাবক হও, নিচের বাটনে গিয়ে সন্তানের পোর্টাল কোড দিয়ে লিংক করো। স্টাফ/এডমিন হতে চাইলে সঠিক ইমেইল দিয়ে লগইন করো অথবা ইনভাইট কোড দিয়ে যোগ দাও।
-          </p>
-          <p className="text-xs text-cream/25 break-all">User ID: {session.user.id}</p>
-          <div className="flex flex-col gap-2">
-            <button onClick={() => setRefreshTick((t) => t + 1)} className="text-xs border border-gold-500/30 text-gold-400 hover:bg-white/5 rounded-xl py-2">
-              আবার চেক করুন
-            </button>
-            <button onClick={() => setForceGuardianView(true)} className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold rounded-xl py-2.5 text-sm">
-              অভিভাবক পোর্টালে যাই (সন্তান লিংক করি)
-            </button>
-            <button onClick={handleLogout} className="text-xs text-cream/50 hover:text-red-300 pt-1">লগআউট</button>
-          </div>
-        </div>
-      </div>
+      <CompleteSetup
+        session={session}
+        onGuardianPortal={() => setForceGuardianView(true)}
+        onLogout={handleLogout}
+        onDone={(msg) => {
+          showToast({ message: msg });
+          setRefreshTick((t) => t + 1);
+        }}
+      />
     );
   }
 
