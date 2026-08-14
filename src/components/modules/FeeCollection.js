@@ -140,7 +140,7 @@ export default function FeeCollection({ institutionId, canEdit, onToast }) {
                   <div className="text-xs text-cream/40">{p.payment_method} · প্রেরক: {p.sender_number || "-"} · TrxID: {p.transaction_id} · ৳{p.amount}</div>
                 </div>
                 {canEdit && (
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <button onClick={() => verifySubmission(s)} className="text-xs bg-emerald-600/20 border border-emerald-500/30 text-emerald-300 px-3 py-1.5 rounded-lg hover:bg-emerald-600/30">যাচাই করুন</button>
                     <button onClick={() => rejectSubmission(s)} className="text-xs bg-red-500/15 border border-red-500/30 text-red-300 px-3 py-1.5 rounded-lg hover:bg-red-500/25">প্রত্যাখ্যান</button>
                   </div>

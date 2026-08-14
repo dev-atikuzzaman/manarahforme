@@ -119,7 +119,7 @@ export default function Donations({ institutionId, institutionName, canEdit, onT
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <button onClick={() => setTab("donations")} className={`px-4 py-2 rounded-xl text-sm ${tab === "donations" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>দান তালিকা</button>
         <button onClick={() => setTab("zakat")} className={`px-4 py-2 rounded-xl text-sm ${tab === "zakat" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>যাকাত ক্যালকুলেটর</button>
       </div>
@@ -168,7 +168,7 @@ export default function Donations({ institutionId, institutionName, canEdit, onT
                     <div className="text-cream/90">{r.donor_name} · ৳{Number(r.amount).toLocaleString("bn-BD")} · {r.purpose}</div>
                     <div className="text-xs text-cream/40">{r.payment_method} · TrxID: {r.transaction_id} · {r.note}</div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <button onClick={() => verifyDonation(r.id)} className="text-xs bg-emerald-600/20 border border-emerald-500/30 text-emerald-300 px-3 py-1.5 rounded-lg hover:bg-emerald-600/30">যাচাই করুন</button>
                     <button onClick={() => rejectDonation(r.id)} className="text-xs bg-red-500/15 border border-red-500/30 text-red-300 px-3 py-1.5 rounded-lg hover:bg-red-500/25">প্রত্যাখ্যান</button>
                   </div>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import DisplayPreferences from "../DisplayPreferences";
+import PasswordInput from "../PasswordInput";
 
 export default function Settings({ profile, institution, canEdit, onInstitutionUpdate, onToast, onLogout, branches, homeInstitutionId, onBranchCreated, onSwitchBranch }) {
   const [tab, setTab] = useState("institution");
@@ -209,7 +210,7 @@ function ProfileTab({ profile, onToast }) {
 
       <form onSubmit={savePassword} className="glass-card rounded-2xl p-6 space-y-3">
         <div className="text-sm text-cream/60">পাসওয়ার্ড পরিবর্তন</div>
-        <input type="password" placeholder="নতুন পাসওয়ার্ড (৬+ ক্যারেক্টার)" className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <PasswordInput placeholder="নতুন পাসওয়ার্ড (৬+ ক্যারেক্টার)" className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={password} onChange={(e) => setPassword(e.target.value)} />
         <button disabled={savingPass} className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold px-4 py-2 rounded-xl text-sm disabled:opacity-50">
           {savingPass ? "পরিবর্তন হচ্ছে..." : "পাসওয়ার্ড পরিবর্তন করুন"}
         </button>
@@ -342,7 +343,7 @@ function PublicPageTab({ institution, canEdit, onInstitutionUpdate, onToast }) {
           <input disabled={!canEdit} placeholder="ঠিকানা" className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={publicAddress} onChange={(e) => setPublicAddress(e.target.value)} />
 
           {canEdit && (
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <button disabled={saving || checking} className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold px-4 py-2 rounded-xl text-sm disabled:opacity-50">
                 {saving || checking ? "..." : "সংরক্ষণ করুন"}
               </button>

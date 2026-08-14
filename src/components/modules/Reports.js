@@ -96,7 +96,7 @@ export default function Reports({ institutionId, institutionName }) {
             <input type="number" value={year} onChange={(e) => setYear(e.target.value)} className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm w-28" />
           )}
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button onClick={handleExcel} disabled={rows.length === 0} className="bg-emerald-600/20 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-600/30 px-4 py-2 rounded-xl text-sm disabled:opacity-40">
             Excel ডাউনলোড
           </button>

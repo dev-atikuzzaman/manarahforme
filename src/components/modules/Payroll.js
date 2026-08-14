@@ -118,7 +118,7 @@ export default function Payroll({ institutionId, canEdit, onToast }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <button onClick={() => setTab("payroll")} className={`px-4 py-2 rounded-xl text-sm ${tab === "payroll" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>বেতন প্রদান</button>
         <button onClick={() => setTab("staff")} className={`px-4 py-2 rounded-xl text-sm ${tab === "staff" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>স্টাফ তালিকা</button>
       </div>
@@ -201,9 +201,9 @@ export default function Payroll({ institutionId, canEdit, onToast }) {
               <input placeholder="পদবি (যেমন: শিক্ষক)" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={form.designation} onChange={(e) => setForm({ ...form, designation: e.target.value })} />
               <input placeholder="ফোন নম্বর" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
               <input placeholder="মাসিক বেতন" type="number" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={form.monthly_salary} onChange={(e) => setForm({ ...form, monthly_salary: e.target.value })} />
-              <div className="flex gap-2">
-                <input type="date" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm flex-1" value={form.joined_date} onChange={(e) => setForm({ ...form, joined_date: e.target.value })} />
-                <button className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold px-4 rounded-xl text-sm shrink-0">
+              <div className="flex gap-2 min-w-0">
+                <input type="date" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm flex-1 min-w-0" value={form.joined_date} onChange={(e) => setForm({ ...form, joined_date: e.target.value })} />
+                <button className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold px-4 rounded-xl text-sm shrink-0 whitespace-nowrap">
                   {editingId ? "আপডেট" : "যোগ করুন"}
                 </button>
               </div>

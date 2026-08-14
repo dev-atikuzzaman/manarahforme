@@ -65,9 +65,9 @@ export default function Students({ institutionId, canEdit, onToast }) {
           <input placeholder="অভিভাবকের নাম" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={form.guardian_name} onChange={(e) => setForm({ ...form, guardian_name: e.target.value })} />
           <input placeholder="ফোন নম্বর" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
           <input placeholder="ক্লাস/জামাত" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={form.class_name} onChange={(e) => setForm({ ...form, class_name: e.target.value })} />
-          <div className="flex gap-2">
-            <input placeholder="মাসিক ফি" type="number" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm flex-1" value={form.monthly_fee} onChange={(e) => setForm({ ...form, monthly_fee: e.target.value })} />
-            <button className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold px-4 rounded-xl text-sm shrink-0">
+          <div className="flex gap-2 min-w-0">
+            <input placeholder="মাসিক ফি" type="number" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm flex-1 min-w-0" value={form.monthly_fee} onChange={(e) => setForm({ ...form, monthly_fee: e.target.value })} />
+            <button className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold px-4 rounded-xl text-sm shrink-0 whitespace-nowrap">
               {editingId ? "আপডেট" : "যোগ করুন"}
             </button>
           </div>

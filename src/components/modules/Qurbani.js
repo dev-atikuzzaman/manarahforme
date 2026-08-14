@@ -103,9 +103,9 @@ export default function Qurbani({ institutionId, canEdit, onToast }) {
           <input required placeholder="ভাগীদারের নাম" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={form.share_holder_name} onChange={(e) => setForm({ ...form, share_holder_name: e.target.value })} />
           <input placeholder="ফোন নম্বর" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
           <input type="number" placeholder="প্রাপ্য টাকা" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" value={form.amount_due} onChange={(e) => setForm({ ...form, amount_due: e.target.value })} />
-          <div className="flex gap-2">
-            <input type="number" placeholder="জমা টাকা" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm flex-1" value={form.amount_paid} onChange={(e) => setForm({ ...form, amount_paid: e.target.value })} />
-            <button className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold px-4 rounded-xl text-sm shrink-0">যোগ করুন</button>
+          <div className="flex gap-2 min-w-0">
+            <input type="number" placeholder="জমা টাকা" className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm flex-1 min-w-0" value={form.amount_paid} onChange={(e) => setForm({ ...form, amount_paid: e.target.value })} />
+            <button className="bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold px-4 rounded-xl text-sm shrink-0 whitespace-nowrap">যোগ করুন</button>
           </div>
           <p className="text-xs text-cream/35 sm:col-span-2 lg:col-span-6">টিপ: একই পশুর নাম (যেমন "গরু-১") বারবার ব্যবহার করে সাতজন ভাগীদার আলাদা এন্ট্রি হিসেবে যোগ করুন — নিচে তারা এক গ্রুপে দেখা যাবে।</p>
         </form>

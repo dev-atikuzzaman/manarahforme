@@ -282,14 +282,14 @@ function MealsTab({ institutionId, residents, mealCost, canEdit, onToast, onMeal
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button onClick={() => setView("daily")} className={`px-3 py-1.5 rounded-lg text-xs ${view === "daily" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>দৈনিক এন্ট্রি</button>
           <button onClick={() => setView("monthly")} className={`px-3 py-1.5 rounded-lg text-xs ${view === "monthly" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>মাসিক বিল</button>
         </div>
         {view === "daily" ? (
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" />
         ) : (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <input type="month" value={monthKey} onChange={(e) => setMonthKey(e.target.value)} className="bg-ink-900/60 border border-gold-500/20 rounded-xl px-3 py-2 text-sm" />
             <button onClick={exportMonthlyBill} disabled={residents.length === 0} className="bg-emerald-600/20 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-600/30 px-4 py-2 rounded-xl text-sm disabled:opacity-40">Excel</button>
           </div>

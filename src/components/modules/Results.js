@@ -151,7 +151,7 @@ export default function Results({ institutionId, institutionName, canEdit, onToa
           {exams.map((e) => <option key={e.id} value={e.id}>{e.name} — {e.class_name}</option>)}
         </select>
         {selectedExam && (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button onClick={() => setTab("subjects")} className={`px-4 py-2 rounded-xl text-sm ${tab === "subjects" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>বিষয়</button>
             <button onClick={() => setTab("marks")} className={`px-4 py-2 rounded-xl text-sm ${tab === "marks" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>নম্বর এন্ট্রি</button>
             <button onClick={() => setTab("results")} className={`px-4 py-2 rounded-xl text-sm ${tab === "results" ? "bg-gold-500/15 text-gold-300 border border-gold-500/30" : "text-cream/50 border border-white/10"}`}>ফলাফল</button>
