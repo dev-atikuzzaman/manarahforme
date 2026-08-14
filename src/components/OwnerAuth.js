@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { supabase } from "../lib/supabase";
 import Logo from "./Logo";
+import PasswordInput from "./PasswordInput";
 
 function safeMessage(error, fallback) {
   if (!error) return fallback;
@@ -102,7 +103,7 @@ export default function OwnerAuth({ onLoggedIn, onSetupChange, onBack }) {
         {mode === "login" && (
           <form onSubmit={handleLogin} className="space-y-3">
             <input className="w-full bg-black/30 border border-violet-400/25 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="মালিকের ইমেইল" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            <input className="w-full bg-black/30 border border-violet-400/25 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="পাসওয়ার্ড" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <PasswordInput className="w-full bg-black/30 border border-violet-400/25 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="পাসওয়ার্ড" value={password} onChange={(e) => setPassword(e.target.value)} required />
             <button disabled={busy} className="w-full bg-violet-500 hover:bg-violet-400 text-white font-semibold rounded-xl py-2.5 transition disabled:opacity-50">
               {busy ? "..." : "মালিক হিসেবে লগইন করুন"}
             </button>
@@ -117,7 +118,7 @@ export default function OwnerAuth({ onLoggedIn, onSetupChange, onBack }) {
           <form onSubmit={handleSignup} className="space-y-3">
             <p className="text-xs text-cream/35">এই সাইন-আপ শুধু তখনই কাজ করবে যদি এখনো কোনো মালিক নির্ধারিত না হয়ে থাকে — একবার কেউ মালিক হয়ে গেলে এটা আর কারো জন্য কাজ করবে না।</p>
             <input className="w-full bg-black/30 border border-violet-400/25 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="ইমেইল" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            <input className="w-full bg-black/30 border border-violet-400/25 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="পাসওয়ার্ড (৬+ ক্যারেক্টার)" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <PasswordInput className="w-full bg-black/30 border border-violet-400/25 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="পাসওয়ার্ড (৬+ ক্যারেক্টার)" value={password} onChange={(e) => setPassword(e.target.value)} required />
             <button disabled={busy} className="w-full bg-violet-500 hover:bg-violet-400 text-white font-semibold rounded-xl py-2.5 transition disabled:opacity-50">
               {busy ? "..." : "মালিক হিসেবে সাইন-আপ করুন"}
             </button>

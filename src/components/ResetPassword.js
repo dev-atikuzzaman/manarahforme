@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { supabase } from "../lib/supabase";
 import Logo from "./Logo";
+import PasswordInput from "./PasswordInput";
 
 export default function ResetPassword({ onDone }) {
   const [password, setPassword] = useState("");
@@ -44,18 +45,16 @@ export default function ResetPassword({ onDone }) {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-3">
             {err && <div className="px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 text-sm">{err}</div>}
-            <input
+            <PasswordInput
               className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30"
               placeholder="নতুন পাসওয়ার্ড (৬+ ক্যারেক্টার)"
-              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <input
+            <PasswordInput
               className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30"
               placeholder="পাসওয়ার্ড আবার লিখুন (কনফার্ম)"
-              type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required

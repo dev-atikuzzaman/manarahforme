@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { supabase } from "../lib/supabase";
 import Logo from "./Logo";
+import PasswordInput from "./PasswordInput";
 
 // error.message কখনো কখনো ফাঁকা অবজেক্ট ("{}") বা খালি স্ট্রিং হয়ে আসে (নেটওয়ার্ক/CORS/কনফিগারেশন
 // সমস্যায়) — এই ফাংশন সবসময় একটা বোঝা যায় এমন বার্তা নিশ্চিত করে, আর ডিবাগের জন্য raw ডাটা যোগ করে।
@@ -188,7 +189,7 @@ export default function Login({ onLoggedIn, onSetupChange }) {
         {mode === "login" && (
           <form onSubmit={handleLogin} className="space-y-3">
             <input className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="ইমেইল" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            <input className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="পাসওয়ার্ড" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <PasswordInput className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="পাসওয়ার্ড" value={password} onChange={(e) => setPassword(e.target.value)} required />
             <button disabled={busy} className="w-full bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold rounded-xl py-2.5 transition shadow-glow disabled:opacity-50">
               {busy ? "..." : "লগইন করুন"}
             </button>
@@ -233,7 +234,7 @@ export default function Login({ onLoggedIn, onSetupChange }) {
             <input className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="আপনার নাম" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
             <input className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="মসজিদ/মাদ্রাসার নাম" value={institutionName} onChange={(e) => setInstitutionName(e.target.value)} required />
             <input className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="ইমেইল" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            <input className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="পাসওয়ার্ড (৬+ ক্যারেক্টার)" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <PasswordInput className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="পাসওয়ার্ড (৬+ ক্যারেক্টার)" value={password} onChange={(e) => setPassword(e.target.value)} required />
             <button disabled={busy} className="w-full bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold rounded-xl py-2.5 transition shadow-glow disabled:opacity-50">
               {busy ? "..." : "প্রতিষ্ঠান তৈরি করুন"}
             </button>
@@ -246,7 +247,7 @@ export default function Login({ onLoggedIn, onSetupChange }) {
             <input className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="আপনার নাম" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
             <input className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30 uppercase" placeholder="ইনভাইট কোড" value={joinCode} onChange={(e) => setJoinCode(e.target.value)} required />
             <input className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="ইমেইল" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            <input className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="পাসওয়ার্ড (৬+ ক্যারেক্টার)" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <PasswordInput className="w-full bg-ink-900/60 border border-gold-500/20 rounded-xl px-4 py-2.5 text-cream placeholder:text-cream/30" placeholder="পাসওয়ার্ড (৬+ ক্যারেক্টার)" value={password} onChange={(e) => setPassword(e.target.value)} required />
             <button disabled={busy} className="w-full bg-gold-500 hover:bg-gold-400 text-ink-950 font-semibold rounded-xl py-2.5 transition shadow-glow disabled:opacity-50">
               {busy ? "..." : "যোগদানের অনুরোধ পাঠান"}
             </button>
