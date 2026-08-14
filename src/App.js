@@ -310,15 +310,24 @@ export default function App() {
       />
 
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b border-gold-500/10 flex-wrap">
-          <button onClick={() => setSidebarOpen(true)} className="text-gold-400 text-xl md:hidden">☰</button>
-          <span className="font-display text-gold-400 md:hidden">মানারাহ</span>
-          <DateWidget compact />
-          <div className="flex items-center gap-2">
-            <button onClick={() => setSearchOpen(true)} className="w-9 h-9 flex items-center justify-center rounded-full border border-gold-500/20 text-gold-400 hover:bg-white/5" aria-label="খুঁজুন">
-              🔍
-            </button>
-            <NotificationBell institutionId={viewInstitution?.id} profile={profile} />
+        <div className="border-b border-gold-500/10">
+          <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <button onClick={() => setSidebarOpen(true)} className="text-gold-400 text-xl md:hidden shrink-0">☰</button>
+              <span className="font-display text-gold-400 md:hidden truncate">মানারাহ</span>
+              <div className="hidden md:block min-w-0">
+                <DateWidget compact />
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button onClick={() => setSearchOpen(true)} className="w-9 h-9 flex items-center justify-center rounded-full border border-gold-500/20 text-gold-400 hover:bg-white/5" aria-label="খুঁজুন">
+                🔍
+              </button>
+              <NotificationBell institutionId={viewInstitution?.id} profile={profile} />
+            </div>
+          </div>
+          <div className="md:hidden px-4 pb-3 -mt-1 overflow-x-auto">
+            <DateWidget compact />
           </div>
         </div>
 

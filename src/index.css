@@ -30,6 +30,21 @@ html, body {
   font-family: var(--app-font);
   background: #04120c;
   color: #f4ead9;
+  /* সেফটি-নেট: কোনো এলিমেন্ট ভুলবশত ভিউপোর্টের বাইরে চলে গেলেও যেন পুরো পেজে
+     পাশাপাশি স্ক্রল না আসে আর কনটেন্ট স্ক্রিনের বাইরে কাটা না পড়ে */
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+#root {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* যেকোনো এলিমেন্ট (input, button, div ইত্যাদি) ভিউপোর্টের চেয়ে চওড়া হয়ে
+   স্ক্রিনের বাইরে বেরিয়ে যাওয়া ঠেকানোর জন্য একটা সাধারণ নিয়ম */
+img, svg, video, canvas {
+  max-width: 100%;
 }
 
 ::-webkit-scrollbar { width: 8px; height: 8px; }
