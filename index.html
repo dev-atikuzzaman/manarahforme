@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="bn">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#04120c" />
+    <meta
+      name="description"
+      content="মানারাহ — মসজিদ ও মাদ্রাসা পরিচালনার জন্য সম্পূর্ণ ডিজিটাল সমাধান। শিক্ষার্থী, উপস্থিতি, হিসাব, দান ও যাকাত — সব এক জায়গায়, রিয়েল-টাইম সিঙ্ক সহ।"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* এই ৪টা ফন্ট এখানে (index.html-এ) রাখা হয়েছে, src/index.css-এ না —
+         কারণ webpack/CRA-এর css-loader src/ ফোল্ডারের ভেতরের CSS ফাইলে absolute
+         url('/fonts/...') কে ভুলবশত মডিউল ইমপোর্ট হিসেবে ধরার চেষ্টা করে এবং বিল্ড
+         ব্যর্থ হয়। index.html টেমপ্লেট হিসেবে সরাসরি সার্ভ হয়, তাই এখানে %PUBLIC_URL%
+         দিয়ে রেফারেন্স দিলে কোনো সমস্যা হয় না। */
+      @font-face {
+        font-family: 'Siyam Rupali';
+        src: url('%PUBLIC_URL%/fonts/SiyamRupali.ttf') format('truetype');
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'NikoshBAN';
+        src: url('%PUBLIC_URL%/fonts/NikoshBAN.ttf') format('truetype');
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Nikosh';
+        src: url('%PUBLIC_URL%/fonts/Nikosh.ttf') format('truetype');
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Kalpurush';
+        src: url('%PUBLIC_URL%/fonts/Kalpurush.ttf') format('truetype');
+        font-display: swap;
+      }
+    </style>
+    <title>মানারাহ · Manarah — মসজিদ ও মাদ্রাসা ম্যানেজমেন্ট</title>
+  </head>
+  <body>
+    <noscript>জাভাস্ক্রিপ্ট চালু করা প্রয়োজন এই অ্যাপটি চালাতে।</noscript>
+    <div id="root"></div>
+  </body>
+</html>
