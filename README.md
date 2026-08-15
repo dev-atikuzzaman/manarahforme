@@ -1,4 +1,4 @@
-# মানারাহ (Manarah) — মসজিদ ও মাদ্রাসা ম্যানেজমেন্ট PWA
+# মিনার (Minar) — মসজিদ ও মাদ্রাসা ম্যানেজমেন্ট PWA
 
 React (CRA) + Tailwind + Supabase (Auth + Postgres + Realtime), Vercel-এ ডিপ্লয়যোগ্য।
 
