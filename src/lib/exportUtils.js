@@ -71,7 +71,7 @@ export async function exportReceipt({ institutionName, receiptNo, donorName, amo
 
   doc.setFont("NotoBengali", "bold");
   doc.setFontSize(16);
-  doc.text(institutionName || "মানারাহ", centerX, y, { align: "center" });
+  doc.text(institutionName || "মিনার", centerX, y, { align: "center" });
 
   y += 7;
   doc.setFont("NotoBengali", "normal");

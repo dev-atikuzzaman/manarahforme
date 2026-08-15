@@ -15,15 +15,19 @@ export const SIZE_OPTIONS = [
   { key: "xlarge", label: "অতিরিক্ত বড়", px: 20 },
 ];
 
-const STORAGE_KEY_FONT = "manarah-font";
-const STORAGE_KEY_SIZE = "manarah-font-size";
+const STORAGE_KEY_FONT = "minar-font";
+const STORAGE_KEY_SIZE = "minar-font-size";
+// পুরোনো নাম (মানারাহ) থেকে ব্র্যান্ড বদলের আগের ব্যবহারকারীদের সেভ করা পছন্দ যাতে হারিয়ে
+// না যায়, সেজন্য পুরোনো কী থেকে একবার পড়ে নেওয়া হয়।
+const LEGACY_KEY_FONT = "manarah-font";
+const LEGACY_KEY_SIZE = "manarah-font-size";
 
 export function getSavedFont() {
-  return localStorage.getItem(STORAGE_KEY_FONT) || "siyam";
+  return localStorage.getItem(STORAGE_KEY_FONT) || localStorage.getItem(LEGACY_KEY_FONT) || "siyam";
 }
 
 export function getSavedSize() {
-  return localStorage.getItem(STORAGE_KEY_SIZE) || "normal";
+  return localStorage.getItem(STORAGE_KEY_SIZE) || localStorage.getItem(LEGACY_KEY_SIZE) || "normal";
 }
 
 export function applyDisplayPrefs(fontKey, sizeKey) {
