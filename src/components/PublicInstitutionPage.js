@@ -80,7 +80,7 @@ export default function PublicInstitutionPage({ slug }) {
         )}
 
         <div className="flex items-center justify-center gap-1.5 mt-10 text-xs text-cream/25">
-          <Logo size={14} />এই পেজটা মানারাহ দিয়ে তৈরি
+          <Logo size={14} />এই পেজটা মিনার দিয়ে তৈরি
         </div>
       </div>
     </div>

@@ -100,7 +100,7 @@ export default function GuardianPortal({ onLogout }) {
           <div className="flex items-center gap-2.5">
             <Logo size={30} />
             <div>
-              <div className="font-display text-2xl text-gold-400">মানারাহ</div>
+              <div className="font-display text-2xl text-gold-400">মিনার</div>
               <div className="text-xs text-cream/40">অভিভাবক পোর্টাল</div>
             </div>
           </div>

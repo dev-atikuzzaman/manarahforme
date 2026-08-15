@@ -29,7 +29,7 @@ export default function Landing({ onGetStarted, onGuardianPortal, onOwnerPortal 
         <nav className="max-w-6xl mx-auto flex items-center justify-between px-6 py-6">
           <button onClick={onOwnerPortal} className="flex items-center gap-2 font-display text-2xl sm:text-3xl text-gold-400 hover:text-gold-300 transition">
             <Logo size={30} />
-            মানারাহ
+            মিনার
           </button>
           <div className="hidden md:flex items-center gap-8 text-sm text-cream/70">
             <a href="#home" className="text-gold-400">হোম</a>
@@ -108,7 +108,7 @@ export default function Landing({ onGetStarted, onGuardianPortal, onOwnerPortal 
           <div className="glass-card rounded-3xl p-8 md:p-12">
             <div className="font-display text-2xl text-gold-400 mb-2">প্রিমিয়াম — সাধারণ মাদ্রাসা সফটওয়্যারের চেয়ে এক ধাপ এগিয়ে</div>
             <p className="text-cream/50 text-sm mb-8 max-w-2xl">
-              প্রচলিত সফটওয়্যারে সাধারণত হাজিরা, রেজাল্ট ও একাউন্টিং থাকে। মানারাহ-তে সেগুলোর পাশাপাশি
+              প্রচলিত সফটওয়্যারে সাধারণত হাজিরা, রেজাল্ট ও একাউন্টিং থাকে। মিনার-এ সেগুলোর পাশাপাশি
               আরও যা থাকছে:
             </p>
             <div className="grid sm:grid-cols-2 gap-4">
@@ -123,7 +123,7 @@ export default function Landing({ onGetStarted, onGuardianPortal, onOwnerPortal 
         </section>
 
         <footer className="max-w-6xl mx-auto px-6 py-10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-cream/40 border-t border-gold-500/10">
-          <span>© মানারাহ — মসজিদ ও মাদ্রাসার জন্য তৈরি</span>
+          <span>© মিনার — মসজিদ ও মাদ্রাসার জন্য তৈরি</span>
           <span>শতভাগ শরীয়াহ্‌সম্মত, সুদমুক্ত সাবস্ক্রিপশন মডেল</span>
         </footer>
       </div>

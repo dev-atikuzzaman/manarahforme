@@ -93,7 +93,7 @@ export default function OwnerAuth({ onLoggedIn, onSetupChange, onBack }) {
             🔒 সীমিত অ্যাক্সেস
           </div>
           <Logo size={40} className="mx-auto mb-2" />
-          <div className="text-2xl font-display text-violet-200">মানারাহ প্ল্যাটফর্ম</div>
+          <div className="text-2xl font-display text-violet-200">মিনার প্ল্যাটফর্ম</div>
           <div className="text-cream/40 text-sm mt-1">এটা সাধারণ প্রতিষ্ঠান/স্টাফ লগইন না — এটা পুরো অ্যাপের মালিকের প্যানেল।</div>
         </div>
 

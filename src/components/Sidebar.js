@@ -39,7 +39,7 @@ export default function Sidebar({
         <div className="px-6 py-6 border-b border-gold-500/10">
           <div className="flex items-center gap-2">
             <Logo size={24} />
-            <div className="font-display text-xl text-gold-400">মানারাহ</div>
+            <div className="font-display text-xl text-gold-400">মিনার</div>
           </div>
           <div className="text-xs text-cream/40 mt-0.5 truncate">{institutionName}</div>
           {activeBranchId && <div className="text-xs text-gold-400/70 mt-1">শাখা দেখছেন</div>}
