@@ -4,6 +4,7 @@ import Landing from "./components/Landing";
 import Login from "./components/Login";
 import Sidebar from "./components/Sidebar";
 import Toast from "./components/Toast";
+import Logo from "./components/Logo";
 import Overview from "./components/modules/Overview";
 import Students from "./components/modules/Students";
 import Attendance from "./components/modules/Attendance";
@@ -60,22 +61,22 @@ export default function App() {
   // (popstate) সেই এন্ট্রি অনুযায়ী state ফিরিয়ে আনা হয়, পুরো অ্যাপ আনমাউন্ট হয় না।
   function navigate(tab) {
     if (tab === active) return;
-    window.history.pushState({ manarahTab: tab, manarahBranch: activeBranchId }, "", `#${tab}`);
+    window.history.pushState({ minarTab: tab, minarBranch: activeBranchId }, "", `#${tab}`);
     setActive(tab);
   }
 
   function switchBranch(branchId) {
     if (branchId === activeBranchId) return;
-    window.history.pushState({ manarahTab: active, manarahBranch: branchId }, "", `#${active}`);
+    window.history.pushState({ minarTab: active, minarBranch: branchId }, "", `#${active}`);
     setActiveBranchId(branchId);
   }
 
   useEffect(() => {
     function handlePopState(e) {
-      setActive(e.state?.manarahTab || "overview");
-      setActiveBranchId(e.state?.manarahBranch || null);
+      setActive(e.state?.minarTab || "overview");
+      setActiveBranchId(e.state?.minarBranch || null);
     }
-    window.history.replaceState({ manarahTab: "overview", manarahBranch: null }, "", "#overview");
+    window.history.replaceState({ minarTab: "overview", minarBranch: null }, "", "#overview");
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
@@ -160,7 +161,7 @@ export default function App() {
     setPasswordRecovery(false);
     setActiveBranchId(null);
     setActive("overview");
-    window.history.replaceState({ manarahTab: "overview", manarahBranch: null }, "", "#overview");
+    window.history.replaceState({ minarTab: "overview", minarBranch: null }, "", "#overview");
   }
 
   if (!supabase) {
@@ -176,7 +177,12 @@ export default function App() {
   }
 
   if (session === undefined) {
-    return <div className="min-h-screen bg-ink-950 flex items-center justify-center text-cream/40">লোড হচ্ছে...</div>;
+    return (
+      <div className="min-h-screen bg-ink-950 flex flex-col items-center justify-center gap-3 text-cream/40">
+        <Logo size={56} className="animate-pulse" />
+        <span>লোড হচ্ছে...</span>
+      </div>
+    );
   }
 
   if (passwordRecovery) {
@@ -202,7 +208,12 @@ export default function App() {
   }
 
   if (!profileChecked) {
-    return <div className="min-h-screen bg-ink-950 flex items-center justify-center text-cream/40">লোড হচ্ছে...</div>;
+    return (
+      <div className="min-h-screen bg-ink-950 flex flex-col items-center justify-center gap-3 text-cream/40">
+        <Logo size={56} className="animate-pulse" />
+        <span>লোড হচ্ছে...</span>
+      </div>
+    );
   }
 
   if (isPlatformAdmin && ownerMode) {
@@ -217,7 +228,12 @@ export default function App() {
 
   if (!profile) {
     if (guardianLinkCount === null) {
-      return <div className="min-h-screen bg-ink-950 flex items-center justify-center text-cream/40">লোড হচ্ছে...</div>;
+      return (
+        <div className="min-h-screen bg-ink-950 flex flex-col items-center justify-center gap-3 text-cream/40">
+          <Logo size={56} className="animate-pulse" />
+          <span>লোড হচ্ছে...</span>
+        </div>
+      );
     }
     if (guardianLinkCount > 0 || forceGuardianView) {
       return <GuardianPortal onLogout={handleLogout} />;
@@ -314,7 +330,7 @@ export default function App() {
           <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-3">
             <div className="flex items-center gap-2 min-w-0">
               <button onClick={() => setSidebarOpen(true)} className="text-gold-400 text-xl md:hidden shrink-0">☰</button>
-              <span className="font-display text-gold-400 md:hidden truncate">মানারাহ</span>
+              <span className="font-display text-gold-400 md:hidden truncate">মিনার</span>
               <div className="hidden md:block min-w-0">
                 <DateWidget compact />
               </div>
