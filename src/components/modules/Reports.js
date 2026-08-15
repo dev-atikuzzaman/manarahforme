@@ -54,8 +54,8 @@ export default function Reports({ institutionId, institutionName }) {
     setBusy(true);
     try {
       await exportPDF({
-        filename: `manarah-${tab}-${filterSuffix(tab, { date, month, year })}.pdf`,
-        title: `মানারাহ — ${TABS.find((t) => t.key === tab).label}`,
+        filename: `minar-${tab}-${filterSuffix(tab, { date, month, year })}.pdf`,
+        title: `মিনার — ${TABS.find((t) => t.key === tab).label}`,
         subtitle: `${institutionName || ""} | ${filterLabel(tab, { date, month, year })} | মোট: ${rows.length}`,
         headers: table.headers,
         rows: table.rows,
@@ -67,7 +67,7 @@ export default function Reports({ institutionId, institutionName }) {
 
   function handleExcel() {
     exportExcel({
-      filename: `manarah-${tab}-${filterSuffix(tab, { date, month, year })}.xlsx`,
+      filename: `minar-${tab}-${filterSuffix(tab, { date, month, year })}.xlsx`,
       sheetName: TABS.find((t) => t.key === tab).label,
       headers: table.headers,
       rows: table.rows,
